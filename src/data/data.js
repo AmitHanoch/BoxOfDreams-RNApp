@@ -30,8 +30,39 @@ const data = [
         treatmentFramework: "אין"
       },
       image: "Dream"
+    },
+    {
+      id: "122",
+      dreamDescription: "חולם לנגן על פסנתר",
+      dreamName: "ללמוד לנגן על פסנתר",
+      kidDetails: {
+        age: 8,
+        area: "גוש דן",
+        city: "תל אביב",
+        educationalFramework: "פנימייה",
+        familyBackground: "מאומץ",
+        firstName: "ילד",
+        lastName: "מתוק",
+        treatmentFramework: "אין"
+      },
+      image: "Dream"
+    },
+    {
+      id: "43432432",
+      dreamDescription: "חולם לנגן על פסנתר",
+      dreamName: "ללמוד לנגן על פסנתר",
+      kidDetails: {
+        age: 8,
+        area: "גוש דן",
+        city: "תל אביב",
+        educationalFramework: "פנימייה",
+        familyBackground: "מאומץ",
+        firstName: "ילד",
+        lastName: "מתוק",
+        treatmentFramework: "אין"
+      },
+      image: "Dream"
     }
-  
   ];
   
   export default data;

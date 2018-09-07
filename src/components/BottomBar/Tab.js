@@ -7,7 +7,7 @@ import {
     Image,
 } from 'react-native';
 
-import assets from '../../../assets';
+import assets from '../../assets';
 
 /*
     Props:

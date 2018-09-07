@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 
 import Toolbar from './Toolbar/Toolbar';
-import BottomBar from './BottomBar/BottomBar';
 import { ListItem } from '../../components';
 import data from '../../data/data';
 
@@ -17,10 +16,7 @@ class List extends PureComponent {
       this.state = { selectedItem: null };
     }
     onListItemPressed = item => {
-      const { onItemPress } = this.props;
       this.setState({ selectedItem: item });
-  
-      onItemPress(item);
     };
     renderItem = item => {
       return(
@@ -37,7 +33,6 @@ class List extends PureComponent {
               renderItem={this.renderItem}
               style={styles.listStyle}
             />
-            <BottomBar />
           </View>
         );
       }
@@ -46,6 +41,7 @@ class List extends PureComponent {
 const styles = StyleSheet.create({
     container: {
       ...StyleSheet.absoluteFillObject,
+      bottom: 64
     },
     listStyle: {
         backgroundColor: '#f5f6f5'

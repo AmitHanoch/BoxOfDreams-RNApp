@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     },
     cardBox: {
       backgroundColor: 'white',
+      marginHorizontal: 8,
       borderRadius: 4,
       ...getPlatformElevation(4),
       flexDirection: 'column'

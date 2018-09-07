@@ -1,16 +1,14 @@
 import React from 'react';
-import { View, StyleSheet} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import List from './src/screens/List/List';
+import { BottomBar } from './src/components';
 
 export default class App extends React.Component {
-  onItemPressed = item => {
-    // TODO: move to details screen
-    console.log('Detail screen -> ' + item);
-  };
   render() {
     return (
       <View style={styles.container}>
-        <List onItemPress={this.onItemPressed}/>
+        <List />        
+        <BottomBar style={styles.footer} />
       </View>
     );
   }
@@ -19,5 +17,12 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column'
   },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    left: 0
+  }
 });
