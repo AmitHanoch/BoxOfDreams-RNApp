@@ -4,11 +4,8 @@ import { View, FlatList, StyleSheet } from 'react-native';
 import Toolbar from './Toolbar/Toolbar';
 import { ListItem } from '../../components';
 import data from '../../data/data';
+import Detail from './Detail/Detail';
 
-/*
-    Props:
-      onItemPress - callback method when an item is pressed
-*/
 class List extends PureComponent {
     constructor(props) {
       super(props);
@@ -18,21 +15,35 @@ class List extends PureComponent {
     onListItemPressed = item => {
       this.setState({ selectedItem: item });
     };
+    onBackPressed = () => {
+      this.setState({ selectedItem: null });
+    };
     renderItem = item => {
       return(
         <ListItem item={item.item} onPress={this.onListItemPressed} />
       );
     }
-    render() {
-        return (
-          <View style={styles.container}>
-            <Toolbar />
-            <FlatList
+    renderContent() {
+      if (this.state.selectedItem !== null) {
+        return(<Detail item={this.state.selectedItem} onBackPressed={this.onBackPressed} />);
+      }
+
+      return (
+        <View>
+          <Toolbar />
+          <FlatList
               data={data}
               keyExtractor={item => item.id}
               renderItem={this.renderItem}
               style={styles.listStyle}
-            />
+          />
+        </View>
+      );
+    }
+    render() {
+        return (
+          <View style={styles.container}>
+            {this.renderContent()}
           </View>
         );
       }
@@ -48,4 +59,4 @@ const styles = StyleSheet.create({
     }
   });
   
-  export default List;
+export default List;

@@ -50,7 +50,7 @@ class BottomBar extends PureComponent {
 
 const styles = StyleSheet.create({
     container: {
-      backgroundColor: 'white',
+      backgroundColor: 'rgb(245,246,245)',
       ...getPlatformElevation(4),
       height: 64,
       paddingHorizontal: 16,

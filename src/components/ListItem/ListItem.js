@@ -49,7 +49,8 @@ const styles = StyleSheet.create({
     },
     imageStyle: {
       flex: 1,
-      borderRadius: 4,
+      borderTopLeftRadius: 4,
+      borderTopRightRadius: 4,
       alignSelf: 'stretch',
       height: 146,
       width: undefined

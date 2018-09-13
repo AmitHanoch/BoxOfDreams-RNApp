@@ -13,12 +13,13 @@ const data = [
         lastName: "חמוד",
         treatmentFramework: "אין"
       },
-      image: "Dream"
+      image: "Dream",
+      isDone: true
     },
     {
       id: "333",
-      dreamDescription: "חולם לנגן על פסנתר",
-      dreamName: "ללמוד לנגן על פסנתר",
+      dreamDescription: "אור (17.5) סובלת מגידול סרטני נדיר בלבלב ומקסלת טיפול תרופתי אנטנסיבי. אור מאוד מוכשרת, משחקת מגיל צעיר וחולמת על לימודים תלת שנתיים בסטודיו למשחק של יורם לוינשטיין.",
+      dreamName: "ללמוד משחק",
       kidDetails: {
         age: 8,
         area: "גוש דן",
@@ -29,12 +30,13 @@ const data = [
         lastName: "מתוק",
         treatmentFramework: "אין"
       },
-      image: "Dream"
+      image: "Dream",
+      isDone: false
     },
     {
       id: "122",
-      dreamDescription: "חולם לנגן על פסנתר",
-      dreamName: "ללמוד לנגן על פסנתר",
+      dreamDescription: "סימה, בת 18.5 חולמת לסוע ללונה פארק ולעלות על האנקונדה. משפחה של סימה סובלת מקשיים כלכליים קשים  מאוד ואין להם דרך להגשים את החלומה",
+      dreamName: "להיות  בלונה פארק",
       kidDetails: {
         age: 8,
         area: "גוש דן",
@@ -45,7 +47,8 @@ const data = [
         lastName: "מתוק",
         treatmentFramework: "אין"
       },
-      image: "Dream"
+      image: "Dream",
+      isDone: false
     },
     {
       id: "43432432",
@@ -61,7 +64,8 @@ const data = [
         lastName: "מתוק",
         treatmentFramework: "אין"
       },
-      image: "Dream"
+      image: "Dream",
+      isDone: false
     }
   ];
   
