@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import List from './src/screens/List/List';
+import TabbedListScreen from  './src/screens/List/TabedListScreen';
 import { BottomBar } from './src/components';
 
 export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <List />        
+        <TabbedListScreen />        
         <BottomBar style={styles.footer} />
       </View>
     );
