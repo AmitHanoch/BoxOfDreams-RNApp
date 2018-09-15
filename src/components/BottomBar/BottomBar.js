@@ -26,6 +26,10 @@ const tabs = [
     }
 ];
 
+/*
+    Props:
+      onTabPress - Callback when a tab is pressed function(tabIndex)
+*/
 class BottomBar extends PureComponent {
     constructor(props) {
         super(props);
@@ -34,8 +38,11 @@ class BottomBar extends PureComponent {
           selectedTabIndex: 2
         };
     }
-    onTabPress = p_tabIndex =>{
-        this.setState({selectedTabIndex: p_tabIndex});
+    onTabPress = p_tabIndex => {
+      const tabCallback = this.props.onTabPress;
+      this.setState({selectedTabIndex: p_tabIndex});
+
+      tabCallback(p_tabIndex);
     }
     render() {
         return (

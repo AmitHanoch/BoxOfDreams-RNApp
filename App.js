@@ -1,15 +1,37 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import List from './src/screens/List/List';
+import { View, Text, StyleSheet } from 'react-native';
 import TabbedListScreen from  './src/screens/List/TabedListScreen';
 import { BottomBar } from './src/components';
 
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      selectedTabIndex: 2
+    };
+  }
+  onTabPress = p_tabIndex => {
+    this.setState({selectedTabIndex: p_tabIndex});
+  }
+  renderTabContent(){
+    switch (this.state.selectedTabIndex) {
+      case 0:
+        return (<Text>Contact Tab</Text>);
+      case 1:
+        return (<Text>About Tab</Text>);
+      case 2:
+        return (<TabbedListScreen />); 
+      default:
+        return null;
+    }
+  }
   render() {
     return (
+
       <View style={styles.container}>
-        <TabbedListScreen />        
-        <BottomBar style={styles.footer} />
+        {this.renderTabContent()}    
+        <BottomBar style={styles.footer} onTabPress={this.onTabPress} />
       </View>
     );
   }
