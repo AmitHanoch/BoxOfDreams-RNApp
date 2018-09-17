@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import { Row } from '../../../components';
-import assets from '../../../assets';
 
 class Toolbar extends PureComponent {
     render() {
@@ -11,7 +10,7 @@ class Toolbar extends PureComponent {
             <View style={styles.statusBar} />
             <View>
               <Row style={styles.toolbarContainer}>
-                <Image style={styles.titleContainer} source={assets['Title']} />
+                {this.props.children}
               </Row>
             </View>
           </View>
@@ -26,12 +25,6 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: 16,
-    },
-    titleContainer: {
-      width: 149,
-      height: 36,
-      alignSelf: 'center',
-      resizeMode: 'contain'
     },
     statusBar: {
       height: 24,

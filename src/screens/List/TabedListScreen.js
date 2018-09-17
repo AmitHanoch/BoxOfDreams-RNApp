@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, Dimensions, StyleSheet } from 'react-native';
+import { View, Text, Image, Dimensions, StyleSheet } from 'react-native';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 
 import Toolbar from './Toolbar/Toolbar';
 import List from './List';
+import assets from '../../assets';
 
 const DoneDreamsRoute = () => (
   <List isDone={true} />
@@ -41,7 +42,9 @@ export default class TabedListScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Toolbar />
+        <Toolbar>
+          <Image style={styles.titleContainer} source={assets['Title']} />
+        </Toolbar>
         <TabView
           navigationState={this.state}
           renderScene={SceneMap({
@@ -70,5 +73,11 @@ const styles = StyleSheet.create({
   },
   indicatorStyle: {
     backgroundColor: 'rgb(38,112,204)'
-  }
+  },
+  titleContainer: {
+    width: 149,
+    height: 36,
+    alignSelf: 'center',
+    resizeMode: 'contain'
+  },
 });
