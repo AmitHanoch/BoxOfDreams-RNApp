@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import TabbedListScreen from  './src/screens/List/TabedListScreen';
+import TabbedListScreen from  './src/screens/List/TabbedListScreen';
 import { BottomBar } from './src/components';
 
 export default class App extends React.Component {

@@ -24,7 +24,7 @@ const tabScenes = SceneMap({
     "1": OpenDreamsRoute,
 });
 
-export default class TabedListScreen extends PureComponent {
+export default class TabbedListScreen extends PureComponent {
   render() {
     return (
       <View style={styles.container}>
