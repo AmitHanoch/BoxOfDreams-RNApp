@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import TabbedListScreen from  './src/screens/List/TabbedListScreen';
 import { BottomBar } from './src/components';
+import TabbedAboutScreen from './src/screens/About/TabbedAboutScreen';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -19,7 +20,7 @@ export default class App extends React.Component {
       case 0:
         return (<Text>Contact Tab</Text>);
       case 1:
-        return (<Text>About Tab</Text>);
+        return (<TabbedAboutScreen />);
       case 2:
         return (<TabbedListScreen />); 
       default:

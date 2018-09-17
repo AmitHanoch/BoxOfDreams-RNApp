@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { Row } from '../../../components';
+import { Row } from '../../components';
 
 class Toolbar extends PureComponent {
     render() {

@@ -2,10 +2,9 @@ import React, { PureComponent } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 import { SceneMap } from 'react-native-tab-view';
 
-import Toolbar from './Toolbar/Toolbar';
+import { Toolbar, Tabs }from '../../components';
 import List from './List';
 import assets from '../../assets';
-import Tabs from '../../components/Tabs/Tabs';
 
 const DoneDreamsRoute = () => (
   <List isDone={true} />
