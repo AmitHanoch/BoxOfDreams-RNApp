@@ -5,7 +5,6 @@ import { View,
         TouchableOpacity,
         Text 
     } from 'react-native';
-import { Ionicons, Feather } from '@expo/vector-icons';
 import Row from '../../../components/Row';
 
 /*
@@ -23,16 +22,6 @@ class DetailToolbar extends PureComponent {
         return(
             <View style={styles.container}>
                 <Image style={styles.imageStyle} source={this.props.image} />
-                <Row style={styles.toolbarContainer}>
-                    <Row style={styles.backContainer}>
-                        <TouchableOpacity onPress={onBackPressed} style={{width: 30, height: 30}}>
-                            <Ionicons name="ios-arrow-back" size={24} color="white" />
-                        </TouchableOpacity>
-                    </Row>
-                    <View style={styles.menuIconContainer}>
-                        <Feather name="share" size={24} color="white" />
-                    </View>
-                </Row>  
             </View>
         );
     }

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1016224671288",
+    "firebase_url": "https://boxofdreams-e7838.firebaseio.com",
+    "project_id": "boxofdreams-e7838",
+    "storage_bucket": "boxofdreams-e7838.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016224671288:android:d546afa864199f72",
+        "android_client_info": {
+          "package_name": "com.boxofdreams"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1016224671288-3ddulpts7ndlg4e6l0e20bdl81sghvnc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfdMgQEEBW4rvmrsb_grRBvIdVHoZ5vMw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

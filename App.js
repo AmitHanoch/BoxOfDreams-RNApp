@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+
 import TabbedListScreen from  './src/screens/List/TabbedListScreen';
 import { BottomBar } from './src/components';
 import TabbedAboutScreen from './src/screens/About/TabbedAboutScreen';
@@ -7,7 +8,6 @@ import TabbedAboutScreen from './src/screens/About/TabbedAboutScreen';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       selectedTabIndex: 2
     };

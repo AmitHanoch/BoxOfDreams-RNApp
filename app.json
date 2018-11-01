@@ -1,10 +1,8 @@
 {
-  "expo": {
-    "name": "Box Of Dreams",
-    "slug": "box-of-dreams",
-    "sdkVersion": "27.0.0",
-    "orientation": "portrait",
-    "version": "1.0.0",
-    "icon": "./src/assets/logo.png"
-  }
+  "name": "boxofdreams",
+  "displayName": "boxofdreams",
+  "sdkVersion": "27.0.0",
+  "orientation": "portrait",
+  "version": "1.0.0",
+  "icon": "./src/assets/logo.png"
 }
