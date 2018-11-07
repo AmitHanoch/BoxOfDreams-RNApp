@@ -5,7 +5,7 @@ import { ListItem } from '../../components';
 import firebase from 'react-native-firebase';
 import Detail from './Detail/Detail';
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 3;
 
 /*
   Props:
@@ -33,8 +33,7 @@ class List extends PureComponent {
         .get().then(this.onCollectionUpdate);
     }
 
-    loadMoreDreams = (distanceFromEnd) => {
-      if (distanceFromEnd === 1) {
+    loadMoreDreams = () => {
         var lastDocument = this.state.dreams[this.state.dreams.length - 1].doc;
         
         // Get more dreams
@@ -43,7 +42,6 @@ class List extends PureComponent {
           .startAfter(lastDocument)
           .limit(PAGE_SIZE)
           .get().then(this.onCollectionUpdate);
-      }
     }
 
     // Callback will pop when the data has changed
@@ -98,6 +96,7 @@ class List extends PureComponent {
               renderItem={this.renderItem}
               style={styles.listStyle}
               onEndReached={this.loadMoreDreams}
+              onEndReachedThreshold={0}
           />
         </View>
       );
