@@ -7,12 +7,9 @@ class Toolbar extends PureComponent {
     render() {
         return (
           <View style={styles.container}>
-            <View style={styles.statusBar} />
-            <View>
               <Row style={styles.toolbarContainer}>
                 {this.props.children}
               </Row>
-            </View>
           </View>
         );
     }
@@ -21,14 +18,12 @@ class Toolbar extends PureComponent {
 const styles = StyleSheet.create({
     container: {},
     toolbarContainer: {
-      height: 56,
+      backgroundColor: 'white',
+      height: 52,
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: 16,
-    },
-    statusBar: {
-      height: 24,
-      backgroundColor: 'white',
+      paddingVertical: 4
     }
   });
   
