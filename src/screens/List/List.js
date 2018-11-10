@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 
 import { ListItem } from '../../components';
 import firebase from 'react-native-firebase';
@@ -42,6 +42,8 @@ class List extends PureComponent {
           .startAfter(lastDocument)
           .limit(PAGE_SIZE)
           .get().then(this.handleData);
+
+        this.setState({loading: true});
     }
 
     // Callback will pop when the data has changed
@@ -84,32 +86,45 @@ class List extends PureComponent {
     }
 
     renderContent() {
-      if (this.state.selectedItem !== null) {
+      // if we load data for the first time we won't show a list
+      if (this.state.loading && this.state.dreams.length === 0) {
+        return null;
+      }
+      else if (this.state.selectedItem !== null) {
         return(<Detail item={this.state.selectedItem} onBackPressed={this.onBackPressed} />);
       }
 
       return (
-        <View>
-          <FlatList
-              data={this.state.dreams}
-              keyExtractor={item => item.key}
-              renderItem={this.renderItem}
-              style={styles.listStyle}
-              onEndReached={this.loadMoreDreams}
-              onEndReachedThreshold={1}
-          />
-        </View>
+        <FlatList
+            data={this.state.dreams}
+            keyExtractor={item => item.key}
+            renderItem={this.renderItem}
+            style={styles.listStyle}
+            onEndReached={this.loadMoreDreams}
+            onEndReachedThreshold={1}
+        />
       );
     }
 
-    render() {
-      if (this.state.loading) {
-        return null; // TODO: render a loagind animation
+    renderLoading() {
+      // There is no list - render a large loading
+      if (this.state.loading && this.state.dreams.length === 0) {
+        return (<ActivityIndicator size="large" color="rgb(38,122,204)" style={styles.largeLoadingStyle} />);
+      }
+      // Loading more items - render a small loading
+      else if (this.state.loading) {
+        return (<ActivityIndicator size="large" color="rgb(38,122,204)" />);
       }
 
+      // No need to load
+      return null;
+    }
+
+    render() {
       return (
         <View style={styles.container}>
           {this.renderContent()}
+          {this.renderLoading()}
         </View>
       );
     }
@@ -121,7 +136,13 @@ const styles = StyleSheet.create({
       bottom: 64
     },
     listStyle: {
-        backgroundColor: '#f5f6f5'
+      backgroundColor: '#f5f6f5'
+    },
+    largeLoadingStyle: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      transform: [{ scale: 2 }]
     }
   });
   
