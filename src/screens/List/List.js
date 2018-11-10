@@ -30,7 +30,7 @@ class List extends PureComponent {
       this.ref.where("isDone", "==", this.props.isDone)
         .orderBy('creation', 'DESC')
         .limit(PAGE_SIZE)
-        .get().then(this.onCollectionUpdate);
+        .get().then(this.handleData);
     }
 
     loadMoreDreams = () => {
@@ -41,11 +41,11 @@ class List extends PureComponent {
           .orderBy('creation', 'DESC')
           .startAfter(lastDocument)
           .limit(PAGE_SIZE)
-          .get().then(this.onCollectionUpdate);
+          .get().then(this.handleData);
     }
 
     // Callback will pop when the data has changed
-    onCollectionUpdate = (querySnapshot) => {
+    handleData = (querySnapshot) => {
       const dreams = this.state.dreams;
 
       querySnapshot.forEach((doc) => {
@@ -96,7 +96,7 @@ class List extends PureComponent {
               renderItem={this.renderItem}
               style={styles.listStyle}
               onEndReached={this.loadMoreDreams}
-              onEndReachedThreshold={0}
+              onEndReachedThreshold={1}
           />
         </View>
       );
