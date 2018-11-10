@@ -21,7 +21,8 @@ class List extends PureComponent {
       this.state = { 
         loading: true,
 	      dreams: [],
-        selectedItem: null
+        selectedItem: null,
+        refreshing: false
        };
     }
 
@@ -40,7 +41,7 @@ class List extends PureComponent {
         this.ref.where("isDone", "==", this.props.isDone)
           .orderBy('creation', 'DESC')
           .startAfter(lastDocument)
-          .limit(PAGE_SIZE)
+          .limit(PAGE_SIZE - 1)
           .get().then(this.handleData);
 
         this.setState({loading: true});
@@ -57,6 +58,7 @@ class List extends PureComponent {
       this.setState({ 
         dreams,
         loading: false,
+        refreshing: false
       });
     }
 
@@ -70,6 +72,11 @@ class List extends PureComponent {
         creation: creation
       };
     }
+
+    refreshDreams = () => {
+      this.setState({loading: false, dreams: [], refreshing: true});
+      this.componentDidMount();
+    };
 
     onListItemPressed = item => {
       this.setState({ selectedItem: item });
@@ -102,11 +109,18 @@ class List extends PureComponent {
             style={styles.listStyle}
             onEndReached={this.loadMoreDreams}
             onEndReachedThreshold={1}
+            onRefresh={this.refreshDreams}
+            refreshing={this.state.refreshing}
         />
       );
     }
 
     renderLoading() {
+      // If in detail mode no need to render
+      if (this.state.selectedItem != null) {
+        return null;
+      }
+
       // There is no list - render a large loading
       if (this.state.loading && this.state.dreams.length === 0) {
         return (<ActivityIndicator size="large" color="rgb(38,122,204)" style={styles.largeLoadingStyle} />);
