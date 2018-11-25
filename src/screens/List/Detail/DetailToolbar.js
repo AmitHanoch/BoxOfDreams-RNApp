@@ -21,7 +21,7 @@ class DetailToolbar extends PureComponent {
 
         return(
             <View style={styles.container}>
-                <Image style={styles.imageStyle} source={this.props.image} />
+                <Image style={styles.imageStyle} source={{uri: this.props.image}} />
             </View>
         );
     }
