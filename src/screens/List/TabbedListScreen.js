@@ -6,31 +6,34 @@ import { Toolbar, Tabs }from '../../components';
 import List from './List';
 import assets from '../../assets';
 
-const DoneDreamsRoute = () => (
-  <List isDone={true} />
-);
-const OpenDreamsRoute = () => (
-  <List isDone={false} />
-);
-
-const tabRoutes =  [
-  { key: "0", title: 'חלומות שהוגשמו' },
-  { key: "1", title: 'חלומות פתוחים' },
-];
-
-const tabScenes = SceneMap({
-    "0": DoneDreamsRoute,
-    "1": OpenDreamsRoute,
-});
 
 export default class TabbedListScreen extends PureComponent {
+  
+  DoneDreamsRoute = () => (
+    <List isDone={true} navigate={this.props.navigate} />
+  );
+
+  OpenDreamsRoute = () => (
+    <List isDone={false} navigate={this.props.navigate} />
+  );
+
+  tabRoutes =  [
+    { key: "0", title: 'חלומות שהוגשמו' },
+    { key: "1", title: 'חלומות פתוחים' },
+  ];
+  
+  tabScenes = SceneMap({
+      "0": this.DoneDreamsRoute,
+      "1": this.OpenDreamsRoute,
+  });
+
   render() {
     return (
       <View style={styles.container}>
         <Toolbar>
           <Image style={styles.titleContainer} source={assets['Title']} />
         </Toolbar>
-        <Tabs routes={tabRoutes} scenes={tabScenes} defaultIndex={1} />
+        <Tabs routes={this.tabRoutes} scenes={this.tabScenes} defaultIndex={1} />
       </View>
     );
   }

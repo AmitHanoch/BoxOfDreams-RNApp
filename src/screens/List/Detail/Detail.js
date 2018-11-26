@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { View, StyleSheet, Text, BackHandler } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import DetailToolbar from './DetailToolbar';
 
 import { getPlatformElevation } from '../../../utils';
@@ -8,23 +8,10 @@ import { Row } from '../../../components';
 /*
     Props:
         item - The selected item
-        onBackPressed - callback when back is pressed
 */
 class Detail extends PureComponent {
     constructor(props) {
         super(props);
-    }
-    componentDidMount() {
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
-    }
-    componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
-    }
-    handleBackPress = () => {
-        const {onBackPressed} = this.props;
-        onBackPressed();
-
-        return true;
     }
     renderDetailSection = item => {
         if (item.isDone) {
@@ -50,12 +37,17 @@ class Detail extends PureComponent {
             </View>
         );
     }
+
+    onBackPressed = () => {
+        this.props.navigation.goBack();
+    };
+
     render() {
-        const {item, onBackPressed} = this.props;
+        const item  = this.props.navigation.getParam('item');
 
         return (
             <View style={styles.container}>
-                <DetailToolbar image={item.imageDownloadURL} onBackPressed={onBackPressed} />
+                <DetailToolbar image={item.imageDownloadURL} onBackPressed={this.onBackPressed} />
 
                     <View style={styles.cardBox}>
                         <Text style={styles.titleStyle}> {item.dreamName}</Text>

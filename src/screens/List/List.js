@@ -3,7 +3,7 @@ import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 
 import { ListItem } from '../../components';
 import firebase from 'react-native-firebase';
-import Detail from './Detail/Detail';
+// import Detail from './Detail/Detail';
 
 const PAGE_SIZE = 3;
 
@@ -21,7 +21,6 @@ class List extends PureComponent {
       this.state = { 
         loading: true,
 	      dreams: [],
-        selectedItem: null,
         refreshing: false
        };
     }
@@ -80,11 +79,7 @@ class List extends PureComponent {
     };
 
     onListItemPressed = item => {
-      this.setState({ selectedItem: item });
-    };
-
-    onBackPressed = () => {
-      this.setState({ selectedItem: null });
+      this.props.navigate('Detail', { item: item });
     };
 
     renderItem = item => {
@@ -98,10 +93,7 @@ class List extends PureComponent {
       if (this.state.loading && this.state.dreams.length === 0) {
         return null;
       }
-      else if (this.state.selectedItem !== null) {
-        return(<Detail item={this.state.selectedItem} onBackPressed={this.onBackPressed} />);
-      }
-
+      
       return (
         <FlatList
             data={this.state.dreams}
@@ -117,11 +109,6 @@ class List extends PureComponent {
     }
 
     renderLoading() {
-      // If in detail mode no need to render
-      if (this.state.selectedItem != null) {
-        return null;
-      }
-
       // There is no list - render a large loading
       if (this.state.loading && this.state.dreams.length === 0) {
         return (<ActivityIndicator size="large" color="rgb(38,122,204)" style={styles.largeLoadingStyle} />);

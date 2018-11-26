@@ -4,8 +4,10 @@ import { View, Text, StyleSheet } from 'react-native';
 import TabbedListScreen from  './src/screens/List/TabbedListScreen';
 import { BottomBar } from './src/components';
 import TabbedAboutScreen from './src/screens/About/TabbedAboutScreen';
+import { createStackNavigator, createAppContainer } from 'react-navigation';
+import Detail from './src/screens/List/Detail/Detail';
 
-export default class App extends React.Component {
+class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,23 +17,23 @@ export default class App extends React.Component {
   onTabPress = p_tabIndex => {
     this.setState({selectedTabIndex: p_tabIndex});
   }
-  renderTabContent(){
+  renderTabContent(navigate){
     switch (this.state.selectedTabIndex) {
       case 0:
         return (<Text>Contact Tab</Text>);
       case 1:
         return (<TabbedAboutScreen />);
       case 2:
-        return (<TabbedListScreen />); 
+        return (<TabbedListScreen navigate={navigate} />); 
       default:
         return null;
     }
   }
   render() {
+    const {navigate} = this.props.navigation;
     return (
-
       <View style={styles.container}>
-        {this.renderTabContent()}    
+        {this.renderTabContent(navigate)}    
         <BottomBar style={styles.footer} onTabPress={this.onTabPress} />
       </View>
     );
@@ -50,3 +52,22 @@ const styles = StyleSheet.create({
     left: 0
   }
 });
+
+const AppNavigator = createStackNavigator(
+  {
+    Home: {screen: HomeScreen},
+    Detail: {screen: Detail},
+  },
+  {
+    initialRouteName: "Home",
+    headerMode: 'none'
+  }
+);
+
+const AppContainer = createAppContainer(AppNavigator);
+
+export default class App extends React.Component {
+  render() {
+    return <AppContainer />;
+  }
+}
