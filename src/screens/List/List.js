@@ -62,15 +62,12 @@ class List extends PureComponent {
     }
 
     createDreamObjectFromDocument = snapshotObj => {
-      const { dreamName, creation, imageDownloadURL } = snapshotObj.data();
+      var dream = snapshotObj.data();
 
-      return {
-        key: snapshotObj.id,
-        doc: snapshotObj, // DocumentSnapshot
-        dreamName: dreamName,
-        creation: creation,
-        imageDownloadURL: imageDownloadURL
-      };
+      dream.key = snapshotObj.id;
+      dream.doc = snapshotObj;
+
+      return dream;
     }
 
     refreshDreams = () => {
