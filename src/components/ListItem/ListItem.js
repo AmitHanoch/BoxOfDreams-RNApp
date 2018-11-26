@@ -3,7 +3,6 @@ import { Image, Text, View, TouchableWithoutFeedback, StyleSheet } from 'react-n
 
 import { getPlatformElevation } from '../../utils';
 import Row from '../Row';
-import assets from '../../assets';
 
 /*
     Props:
@@ -17,14 +16,14 @@ class ListItem extends PureComponent {
     };
     render() {
         const { item, style } = this.props;
-        const { dreamName, image, ...rest } = item;
+        const { dreamName, imageDownloadURL, ...rest } = item;
 
         return (
             <View style={styles.conteiner}>
                 <TouchableWithoutFeedback onPress={this.onPressed} style={{backgroundColor: '#f5f6f5'}}>
                     <View style={[styles.cardBox, style]} pointerEvents="box-only">
                         <Row style={styles.topSection}>
-                            <Image style={styles.imageStyle} source={assets[image]} />
+                            <Image style={styles.imageStyle} source={{uri: imageDownloadURL}} />
                         </Row>
                         <Row style={styles.bottomSection}>
                             <Text style={styles.titleStyle}> {dreamName}</Text>

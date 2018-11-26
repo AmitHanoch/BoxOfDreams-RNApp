@@ -63,13 +63,14 @@ class List extends PureComponent {
     }
 
     createDreamObjectFromDocument = snapshotObj => {
-      const { dreamName, creation } = snapshotObj.data();
+      const { dreamName, creation, imageDownloadURL } = snapshotObj.data();
 
       return {
         key: snapshotObj.id,
         doc: snapshotObj, // DocumentSnapshot
         dreamName: dreamName,
-        creation: creation
+        creation: creation,
+        imageDownloadURL: imageDownloadURL
       };
     }
 

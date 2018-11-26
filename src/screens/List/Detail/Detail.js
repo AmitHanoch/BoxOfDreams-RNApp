@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import { View, StyleSheet, Text, BackHandler } from 'react-native';
 import DetailToolbar from './DetailToolbar';
 
-import assets from '../../../assets';
 import { getPlatformElevation } from '../../../utils';
 import { Row } from '../../../components';
 
@@ -56,7 +55,7 @@ class Detail extends PureComponent {
 
         return (
             <View style={styles.container}>
-                <DetailToolbar image={assets[item.image]} onBackPressed={onBackPressed} />
+                <DetailToolbar image={item.imageDownloadURL} onBackPressed={onBackPressed} />
 
                     <View style={styles.cardBox}>
                         <Text style={styles.titleStyle}> {item.dreamName}</Text>

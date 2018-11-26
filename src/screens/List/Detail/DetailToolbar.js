@@ -2,10 +2,7 @@ import React, { PureComponent } from 'react';
 import { View,
         Image, 
         StyleSheet, 
-        TouchableOpacity,
-        Text 
     } from 'react-native';
-import Row from '../../../components/Row';
 
 /*
     Props:
