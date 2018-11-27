@@ -85,45 +85,28 @@ class List extends PureComponent {
       );
     }
 
-    renderContent() {
+    render() {
       // if we load data for the first time we won't show a list
       if (this.state.loading && this.state.dreams.length === 0) {
-        return null;
+        return <ActivityIndicator size="large" color="rgb(38,122,204)" style={styles.largeLoadingStyle} />
       }
       
       return (
-        <FlatList
-            data={this.state.dreams}
-            keyExtractor={item => item.key}
-            renderItem={this.renderItem}
-            style={styles.listStyle}
-            onEndReached={this.loadMoreDreams}
-            onEndReachedThreshold={1}
-            onRefresh={this.refreshDreams}
-            refreshing={this.state.refreshing}
-        />
-      );
-    }
-
-    renderLoading() {
-      // There is no list - render a large loading
-      if (this.state.loading && this.state.dreams.length === 0) {
-        return (<ActivityIndicator size="large" color="rgb(38,122,204)" style={styles.largeLoadingStyle} />);
-      }
-      // Loading more items - render a small loading
-      else if (this.state.loading) {
-        return (<ActivityIndicator size="large" color="rgb(38,122,204)" />);
-      }
-
-      // No need to load
-      return null;
-    }
-
-    render() {
-      return (
         <View style={styles.container}>
-          {this.renderContent()}
-          {this.renderLoading()}
+          <View style={styles.listWrapper}>
+            <FlatList
+                data={this.state.dreams}
+                keyExtractor={item => item.key}
+                renderItem={this.renderItem}
+                style={styles.listStyle}
+                onEndReached={this.loadMoreDreams}
+                onEndReachedThreshold={1}
+                onRefresh={this.refreshDreams}
+                refreshing={this.state.refreshing}
+            />
+          </View>
+
+          {this.state.loading ? <ActivityIndicator size="large" color="rgb(38,122,204)" style={styles.smallLoadingStyle}/> : null}
         </View>
       );
     }
@@ -132,7 +115,13 @@ class List extends PureComponent {
 const styles = StyleSheet.create({
     container: {
       ...StyleSheet.absoluteFillObject,
-      bottom: 64
+      bottom: 64,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    listWrapper: {
+      height: '100%',
+      width: '100%'
     },
     listStyle: {
       backgroundColor: '#f5f6f5'
@@ -142,6 +131,12 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       transform: [{ scale: 2 }]
+    },
+    smallLoadingStyle: {
+      backgroundColor: 'transparent',
+      position: 'absolute',
+      alignItems: 'center',
+      bottom: 0
     }
   });
   
