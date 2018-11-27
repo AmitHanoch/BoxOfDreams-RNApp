@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, I18nManager} from 'react-native';
 
 import TabbedListScreen from  './src/screens/List/TabbedListScreen';
 import { BottomBar } from './src/components';
@@ -11,7 +11,7 @@ class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTabIndex: 2
+      selectedTabIndex: 0
     };
   }
   onTabPress = p_tabIndex => {
@@ -20,11 +20,11 @@ class HomeScreen extends React.Component {
   renderTabContent(navigate){
     switch (this.state.selectedTabIndex) {
       case 0:
-        return (<Text>Contact Tab</Text>);
+        return (<TabbedListScreen navigate={navigate} />); 
       case 1:
         return (<TabbedAboutScreen />);
       case 2:
-        return (<TabbedListScreen navigate={navigate} />); 
+        return (<Text>Contact Tab</Text>);
       default:
         return null;
     }
@@ -67,6 +67,11 @@ const AppNavigator = createStackNavigator(
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
+  componentWillMount() {
+    I18nManager.allowRTL(true);
+    I18nManager.forceRTL(true);
+  }
+
   render() {
     return <AppContainer />;
   }

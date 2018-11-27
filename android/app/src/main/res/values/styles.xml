@@ -3,6 +3,9 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="android:layoutDirection">rtl</item>
+        <item name="android:textDirection">rtl</item>  
+        <item name="android:textAlignment">textStart</item>
     </style>
 
 </resources>

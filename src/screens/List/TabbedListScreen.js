@@ -18,13 +18,13 @@ export default class TabbedListScreen extends PureComponent {
   );
 
   tabRoutes =  [
-    { key: "0", title: 'חלומות שהוגשמו' },
-    { key: "1", title: 'חלומות פתוחים' },
+    { key: "0", title: 'חלומות פתוחים' },
+    { key: "1", title: 'חלומות שהוגשמו' },
   ];
   
   tabScenes = SceneMap({
-      "0": this.DoneDreamsRoute,
-      "1": this.OpenDreamsRoute,
+    "0": this.OpenDreamsRoute,
+    "1": this.DoneDreamsRoute,
   });
 
   render() {
@@ -33,7 +33,7 @@ export default class TabbedListScreen extends PureComponent {
         <Toolbar>
           <Image style={styles.titleContainer} source={assets['Title']} />
         </Toolbar>
-        <Tabs routes={this.tabRoutes} scenes={this.tabScenes} defaultIndex={1} />
+        <Tabs routes={this.tabRoutes} scenes={this.tabScenes} defaultIndex={0} />
       </View>
     );
   }

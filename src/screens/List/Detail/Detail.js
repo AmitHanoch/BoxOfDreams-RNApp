@@ -73,12 +73,13 @@ const styles = StyleSheet.create({
     cardBox: {
       backgroundColor: 'white',
       ...getPlatformElevation(4),
-      flexDirection: 'column'
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     titleStyle: {
         textAlign: 'center',
-        alignSelf: 'stretch',
-        width: '100%',
+        alignSelf: 'center',
         padding: 8,
         fontSize: 18,
     },

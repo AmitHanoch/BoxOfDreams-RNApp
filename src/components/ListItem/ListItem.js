@@ -62,12 +62,13 @@ const styles = StyleSheet.create({
     bottomSection: {
       flex: 2,
       padding: 4,
-      height: undefined
+      height: undefined,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     titleStyle: {
       textAlign: 'center',
-      alignSelf: 'stretch',
-      width: '100%',
+      alignSelf: 'center',
       fontSize: 18,
     }
   });

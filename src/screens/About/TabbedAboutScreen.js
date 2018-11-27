@@ -47,15 +47,15 @@ const DonorsRoute = () => (
 );
 
 const tabRoutes =  [
-  { key: "0", title: 'תורמים' },
+  { key: "0", title: 'אודות' },
   { key: "1", title: 'חזון' },
-  { key: "2", title: 'אודות' },
+  { key: "2", title: 'תורמים' },
 ];
 
 const tabScenes = SceneMap({
-    "0": DonorsRoute,
-    "1": VisionRoute,
-    "2": AboutRoute,
+  "0": AboutRoute,
+  "1": VisionRoute,
+  "2": DonorsRoute,
 });
 
 
@@ -66,7 +66,7 @@ export default class TabbedAboutScreen extends PureComponent {
         <Toolbar>
           <Text style={styles.titleContainer}>על העמותה</Text>
         </Toolbar>
-        <Tabs routes={tabRoutes} scenes={tabScenes} defaultIndex={2} />
+        <Tabs routes={tabRoutes} scenes={tabScenes} defaultIndex={0} />
       </View>
     );
   }
@@ -88,7 +88,8 @@ const styles = StyleSheet.create({
     color: 'rgb(74,74,74)',
     fontSize: 16,
     lineHeight: 23,
-    textAlign: 'right'
+    textAlign: 'right',
+    writingDirection: 'rtl'
   }
   
 });
