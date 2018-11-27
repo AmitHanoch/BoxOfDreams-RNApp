@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, TouchableHighlight } from 'react-native';
 import DetailToolbar from './DetailToolbar';
 
 import { getPlatformElevation } from '../../../utils';
@@ -14,7 +14,7 @@ class Detail extends PureComponent {
         super(props);
     }
 
-    renderDoneDream = item => {
+    renderDoneDream = () => {
         return(
             <View style={[styles.cardBox, {position: 'absolute', bottom: 0, padding: 8}]}>
                 <Row>
@@ -22,11 +22,14 @@ class Detail extends PureComponent {
                         התרגשתם?
                     </Text>
                 </Row>
-                <Text style={[styles.regularText, {fontWeight: 'bold', color: 'rgb(22,94,181)'}]}>
-                    שתפו
-                </Text>
                 <Text style={styles.regularText}>
-                     את הגשמת החלום ואולי אנשים נוספים יקחו חלק בחלום הבא.
+                    <Text style={[styles.regularText, {fontWeight: 'bold', color: 'rgb(22,94,181)'}]}>
+                        שתפו 
+                    </Text>
+                    {" "}
+                    את הגשמת החלום ואולי אנשים נוספים
+                    {"\n"} 
+                    יקחו חלק בחלום הבא.
                 </Text>
             </View>
         );
@@ -35,11 +38,26 @@ class Detail extends PureComponent {
     renderOpenDream = item => {
         return(
             <View style={[styles.cardBox, {position: 'absolute', bottom: 0, padding: 8}]}>
-                <Text style={styles.regularText}>
-                     חלום פתוח
+                <Text style={styles.titleStyle}>
+                    בכדי להגשים את החלום אנחנו צריכים
                 </Text>
+                <View style={styles.horizontalLine}></View>
+                <Text style={styles.descriptionStyle}>
+                    {item.dreamStages}
+                </Text>
+                
+                <TouchableHighlight
+                    style={styles.submit}
+                    onPress={() => this.wantToHelpPress(item)}
+                    underlayColor='#fff'>
+                        <Text style={styles.submitText}>אני רוצה להגשים</Text>
+                </TouchableHighlight>
             </View>
         );
+    }
+
+    wantToHelpPress = dream => {
+        // TODO: navigate to contacts
     }
 
     onBackPressed = () => {
@@ -59,7 +77,7 @@ class Detail extends PureComponent {
                         <Text style={styles.descriptionStyle}> {item.dreamDescription}</Text>
                     </View>
 
-                    {item.isDone ? this.renderDoneDream(item) : this.renderOpenDream(item)}
+                    {item.isDone ? this.renderDoneDream() : this.renderOpenDream(item)}
             </View>
         );
     }
@@ -76,6 +94,7 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
+      width: "100%"
     },
     titleStyle: {
         textAlign: 'center',
@@ -86,23 +105,40 @@ const styles = StyleSheet.create({
     descriptionStyle: {
         textAlign: 'right',
         alignSelf: 'stretch',
-        width: '100%',
         padding: 16,
         fontSize: 14,
         color: 'rgb(74,74,74)'
     },
     horizontalLine: {
-        marginHorizontal: 16,
-        borderBottomColor: '#f5f6f5',
+        paddingHorizontal: 32,
+        width: "100%",
+        borderBottomColor: 'rgb(156,156,156)',
         borderBottomWidth: 1,
     },
     regularText: {
         textAlign: 'right',
-        alignSelf: 'stretch',
-        width: '100%',
         fontSize: 14,
-        color: 'rgb(74,74,74)'
-    }
+        color: 'rgb(74,74,74)',
+        width: '100%'
+    },
+    submit:{
+        marginRight:40,
+        marginLeft:40,
+        marginTop:10,
+        paddingTop:8,
+        paddingBottom: 8,
+        backgroundColor:'rgb(38,112,204)',
+        borderRadius:10,
+        borderWidth: 1,
+        borderColor: '#fff',
+        width: '100%',
+        alignItems: 'center'
+      },
+      submitText:{
+          color:'#fff',
+          textAlign:'center',
+          fontSize: 18,
+      }
   });
 
 export default Detail;
