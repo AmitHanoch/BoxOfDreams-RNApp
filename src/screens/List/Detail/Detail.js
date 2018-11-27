@@ -13,27 +13,31 @@ class Detail extends PureComponent {
     constructor(props) {
         super(props);
     }
-    renderDetailSection = item => {
-        if (item.isDone) {
-            return(
-                <View style={[styles.cardBox, {position: 'absolute', bottom: 0, padding: 8}]}>
-                    <Row>
-                        <Text style={[styles.regularText, {fontSize: 18, fontWeight: 'bold'}]}>
-                            התרגשתם?
-                        </Text>
-                    </Row>
-                    <Text style={[styles.regularText, {fontWeight: 'bold', color: 'rgb(22,94,181)'}]}>
-                        שתפו
-                    </Text>
-                    <Text style={styles.regularText}>
-                         את הגשמת החלום ואולי אנשים נוספים יקחו חלק בחלום הבא.
-                    </Text>
-                </View>
-            );
-        }
 
+    renderDoneDream = item => {
         return(
-            <View style={styles.cardBox}>
+            <View style={[styles.cardBox, {position: 'absolute', bottom: 0, padding: 8}]}>
+                <Row>
+                    <Text style={[styles.regularText, {fontSize: 18, fontWeight: 'bold'}]}>
+                        התרגשתם?
+                    </Text>
+                </Row>
+                <Text style={[styles.regularText, {fontWeight: 'bold', color: 'rgb(22,94,181)'}]}>
+                    שתפו
+                </Text>
+                <Text style={styles.regularText}>
+                     את הגשמת החלום ואולי אנשים נוספים יקחו חלק בחלום הבא.
+                </Text>
+            </View>
+        );
+    }
+
+    renderOpenDream = item => {
+        return(
+            <View style={[styles.cardBox, {position: 'absolute', bottom: 0, padding: 8}]}>
+                <Text style={styles.regularText}>
+                     חלום פתוח
+                </Text>
             </View>
         );
     }
@@ -55,7 +59,7 @@ class Detail extends PureComponent {
                         <Text style={styles.descriptionStyle}> {item.dreamDescription}</Text>
                     </View>
 
-                    {this.renderDetailSection(item)}
+                    {item.isDone ? this.renderDoneDream(item) : this.renderOpenDream(item)}
             </View>
         );
     }
