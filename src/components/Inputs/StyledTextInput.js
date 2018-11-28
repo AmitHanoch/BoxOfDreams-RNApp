@@ -1,5 +1,6 @@
 import React from 'react';
 import { TextInput, StyleSheet } from 'react-native';
+import consts from '../../utils/Constants';
 
 const StyledTextInput = ({
     placeholder,
@@ -18,7 +19,7 @@ const styles = StyleSheet.create({
     inputStyle: {
         width: '100%',
         fontSize: 15,
-        borderBottomColor: 'rgb(38,112,204)',
+        borderBottomColor: consts.COLORS.PRIMARY_BLUE,
         borderBottomWidth: 1,
     }
 });

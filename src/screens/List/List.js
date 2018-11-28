@@ -3,7 +3,7 @@ import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 
 import { ListItem } from '../../components';
 import firebase from 'react-native-firebase';
-// import Detail from './Detail/Detail';
+import consts from '../../utils/Constants';
 
 const PAGE_SIZE = 3;
 
@@ -15,9 +15,6 @@ class List extends PureComponent {
     constructor(props) {
       super(props);
       
-      // Hold a ref to DB
-      this.ref = firebase.firestore().collection('Dreams');
-
       this.state = { 
         loading: true,
 	      dreams: [],
@@ -25,10 +22,15 @@ class List extends PureComponent {
        };
     }
 
+    componentWillMount() {
+      // Hold a ref to DB
+      this.ref = firebase.firestore().collection(consts.DREAMS_COLLECTION_NAME);
+    }
+
     componentDidMount() {
       // Get the first dreams
-      this.ref.where("isDone", "==", this.props.isDone)
-        .orderBy('creation', 'DESC')
+      this.ref.where(consts.DREAM_OBJECT_FIELDS.IS_DONE, "==", this.props.isDone)
+        .orderBy(consts.DREAM_OBJECT_FIELDS.CREATION, 'DESC')
         .limit(PAGE_SIZE)
         .get().then(this.handleData);
     }
@@ -37,8 +39,8 @@ class List extends PureComponent {
         var lastDocument = this.state.dreams[this.state.dreams.length - 1].doc;
         
         // Get more dreams
-        this.ref.where("isDone", "==", this.props.isDone)
-          .orderBy('creation', 'DESC')
+        this.ref.where(consts.DREAM_OBJECT_FIELDS.IS_DONE, "==", this.props.isDone)
+          .orderBy(consts.DREAM_OBJECT_FIELDS.CREATION, 'DESC')
           .startAfter(lastDocument)
           .limit(PAGE_SIZE - 1)
           .get().then(this.handleData);
