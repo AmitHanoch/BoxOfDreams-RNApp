@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, TouchableHighlight } from 'react-native';
 import DetailToolbar from './DetailToolbar';
 
 import { getPlatformElevation } from '../../../utils';
-import { Row } from '../../../components';
+import { Row, StyledButton } from '../../../components';
 
 /*
     Props:
@@ -46,12 +46,7 @@ class Detail extends PureComponent {
                     {item.dreamStages}
                 </Text>
                 
-                <TouchableHighlight
-                    style={styles.submit}
-                    onPress={() => this.wantToHelpPress(item)}
-                    underlayColor='#fff'>
-                        <Text style={styles.submitText}>אני רוצה להגשים</Text>
-                </TouchableHighlight>
+                <StyledButton onPressCallback={() => this.wantToHelpPress(item)} text="אני רוצה להגשים" />
             </View>
         );
     }
@@ -120,25 +115,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: 'rgb(74,74,74)',
         width: '100%'
-    },
-    submit:{
-        marginRight:40,
-        marginLeft:40,
-        marginTop:10,
-        paddingTop:8,
-        paddingBottom: 8,
-        backgroundColor:'rgb(38,112,204)',
-        borderRadius:10,
-        borderWidth: 1,
-        borderColor: '#fff',
-        width: '100%',
-        alignItems: 'center'
-      },
-      submitText:{
-          color:'#fff',
-          textAlign:'center',
-          fontSize: 18,
-      }
+    }
   });
 
 export default Detail;

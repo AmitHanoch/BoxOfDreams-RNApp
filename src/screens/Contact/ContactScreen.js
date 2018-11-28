@@ -11,7 +11,9 @@ export default class ContactScreen extends PureComponent {
         <Toolbar style={{...getPlatformElevation(4)}}>
           <Text style={styles.toolBarTitle}>צור קשר</Text>
         </Toolbar>
-        <Text style={styles.title}>רוצים להתנדב או לכתוב לנו על חלום של ילד? מלא פרטים ונציג העמותה יצור אתכם קשר</Text>
+        <View style={styles.content}>
+          <Text style={styles.title}>רוצים להתנדב או לכתוב לנו על חלום של ילד? מלא פרטים ונציג העמותה יצור אתכם קשר</Text>
+        </View>
       </View>
     );
   }
@@ -22,6 +24,11 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: '#f5f6f5',
   },  
+  content: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%'
+  },
   toolBarTitle: {
     color: 'rgb(38,112,204)',
     fontWeight: 'bold',
@@ -29,7 +36,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   title: {
-    padding: 16,
+    margin: 25,
+    lineHeight: 23,
+    alignSelf: 'center',
+    textAlign: 'center',
     fontSize: 15,
     fontWeight: 'bold',
     color: 'rgb(74,74,74)'
