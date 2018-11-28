@@ -3,10 +3,11 @@ import { Text, TouchableHighlight, StyleSheet } from 'react-native';
 
 const StyledButton = ({
     onPressCallback,
-    text
+    text,
+    style
 }) => (
     <TouchableHighlight
-        style={styles.submit}
+        style={[styles.submit, style]}
         onPress={() => onPressCallback(item)}
         underlayColor='#fff'>
             <Text style={styles.submitText}>{text}</Text>
