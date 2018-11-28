@@ -88,7 +88,9 @@ class List extends PureComponent {
     render() {
       // if we load data for the first time we won't show a list
       if (this.state.loading && this.state.dreams.length === 0) {
-        return <ActivityIndicator size="large" color="rgb(38,122,204)" style={styles.largeLoadingStyle} />
+        return (<View style={styles.container}>
+                  <ActivityIndicator size="large" color="rgb(38,122,204)" style={styles.largeLoadingStyle} />
+                </View>);
       }
       
       return (
@@ -98,7 +100,6 @@ class List extends PureComponent {
                 data={this.state.dreams}
                 keyExtractor={item => item.key}
                 renderItem={this.renderItem}
-                style={styles.listStyle}
                 onEndReached={this.loadMoreDreams}
                 onEndReachedThreshold={1}
                 onRefresh={this.refreshDreams}
@@ -118,13 +119,11 @@ const styles = StyleSheet.create({
       bottom: 64,
       justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: 'transparent',
     },
     listWrapper: {
       height: '100%',
       width: '100%'
-    },
-    listStyle: {
-      backgroundColor: '#f5f6f5'
     },
     largeLoadingStyle: {
       flex: 1,

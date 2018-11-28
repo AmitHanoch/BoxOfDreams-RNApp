@@ -74,7 +74,8 @@ export default class TabbedAboutScreen extends PureComponent {
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#f5f6f5',
   },  
   titleContainer: {
     color: 'rgb(38,112,204)',
@@ -83,6 +84,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   contentText: {
+    backgroundColor: 'transparent',
     width: '100%',
     padding: 8,
     color: 'rgb(74,74,74)',
@@ -91,5 +93,4 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     writingDirection: 'rtl'
   }
-  
-});
+ });

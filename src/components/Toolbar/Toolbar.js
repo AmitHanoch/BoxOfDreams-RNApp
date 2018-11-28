@@ -6,17 +6,14 @@ import { Row } from '../../components';
 class Toolbar extends PureComponent {
     render() {
         return (
-          <View style={styles.container}>
-              <Row style={styles.toolbarContainer}>
+              <Row style={[styles.toolbarContainer, this.props.style]}>
                 {this.props.children}
               </Row>
-          </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    container: {},
     toolbarContainer: {
       backgroundColor: 'white',
       height: 52,

@@ -41,7 +41,8 @@ export default class TabbedListScreen extends PureComponent {
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#f5f6f5',
   },  
   titleContainer: {
     width: 149,

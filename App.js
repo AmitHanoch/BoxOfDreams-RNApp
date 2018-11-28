@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, I18nManager} from 'react-native';
+import { View, StyleSheet, I18nManager} from 'react-native';
 
 import TabbedListScreen from  './src/screens/List/TabbedListScreen';
 import { BottomBar } from './src/components';
 import TabbedAboutScreen from './src/screens/About/TabbedAboutScreen';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import Detail from './src/screens/List/Detail/Detail';
+import ContactScreen from './src/screens/Contact/ContactScreen';
+import { getPlatformElevation } from './src/utils';
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -24,7 +26,7 @@ class HomeScreen extends React.Component {
       case 1:
         return (<TabbedAboutScreen />);
       case 2:
-        return (<Text>Contact Tab</Text>);
+        return (<ContactScreen />);
       default:
         return null;
     }
@@ -46,6 +48,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   footer: {
+    ...getPlatformElevation(16),
     position: 'absolute',
     bottom: 0,
     right: 0,
