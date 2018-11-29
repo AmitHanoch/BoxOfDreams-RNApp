@@ -46,7 +46,7 @@ class Detail extends PureComponent {
                     {item.dreamStages}
                 </Text>
                 
-                <StyledButton onPressCallback={() => this.wantToHelpPress(item)} text="אני רוצה להגשים" />
+                <StyledButton onPressCallback={() => this.wantToHelpPress(item)} text="אני רוצה לעזור" />
             </View>
         );
     }

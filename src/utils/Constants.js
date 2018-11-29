@@ -7,6 +7,11 @@ const consts = {
     },
     COLORS: {
         PRIMARY_BLUE: 'rgb(38,112,204)'
+    },
+    PARAM_KEYS: {
+        ABOUT: 'About',
+        VISION: 'Vision',
+        DONORS_IMAGE_DOWNLOAD_LINKS: 'DonorsImagesDownloadLinks'
     }
 };
 

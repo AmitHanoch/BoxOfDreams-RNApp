@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 import { Toolbar, StyledTextInput, StyledButton } from '../../components';
 import { getPlatformElevation } from '../../utils';
