@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, ActivityIndicator, FlatList, StyleSheet, Image } from 'react-native';
 import firebase from 'react-native-firebase';
-import consts from '../../utils/Constants';
+import { consts, getPlatformElevation } from '../../utils';
 
 const ITEMS_IN_ROW = 3;
 
@@ -25,10 +25,11 @@ export default class DonorsList extends Component {
 
         for (let index = 0; index < allLinks.length; index++) {
           const element = allLinks[index];
-          if (!rows[parseInt(index / 3)]) {
-            rows.push([]);
+          const rowNumber = parseInt(index / ITEMS_IN_ROW);
+          if (!rows[rowNumber]) {
+            rows.push({key: rowNumber.toString(), urls: []});
           }
-          rows[parseInt(index / 3)].push(element);
+          rows[rowNumber].urls.push(element);
         }
         
         this.setState({imagesLinks: rows, loading: false});
@@ -36,7 +37,7 @@ export default class DonorsList extends Component {
   }
 
   renderItem = row => {
-    const images = row.item.map(image => <Image source={{uri: image}} style={styles.imageStyle} />)
+    const images = row.item.urls.map(image => <View style={styles.frame}><Image source={{uri: image}} style={styles.imageStyle} /></View>)
 
     return (<View style={styles.listRow}>
       {images}
@@ -70,15 +71,29 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
       },
+      frame: {
+        margin: 8,
+        borderColor: consts.COLORS.WHITE,
+        borderWidth: 1,
+        padding: 4,
+        borderRadius: 50,
+        height: 100,
+        width: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: consts.COLORS.WHITE,
+        ...getPlatformElevation(16)
+      },
       imageStyle: {
-        alignSelf: 'stretch',
-        height: 50,
-        width: 50
+        resizeMode: 'contain',
+        height: 60,
+        width: 60,
       },
       listRow: {
         justifyContent: 'center',
+        alignItems: 'center',
+        padding: 16,
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        flex: 1,
+        width: '100%',
       }
 });
