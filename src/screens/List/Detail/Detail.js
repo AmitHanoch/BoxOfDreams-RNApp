@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
       backgroundColor: consts.COLORS.OFF_WHITE
     },
     cardBox: {
-      backgroundColor: 'white',
+      backgroundColor: consts.COLORS.WHITE,
       ...getPlatformElevation(4),
       flexDirection: 'column',
       alignItems: 'center',

@@ -26,12 +26,12 @@ const styles = StyleSheet.create({
         backgroundColor: consts.COLORS.PRIMARY_BLUE,
         borderRadius:10,
         borderWidth: 1,
-        borderColor: consts.COLORS.OFF_WHITE,
+        borderColor: consts.COLORS.WHITE,
         width: '100%',
         alignItems: 'center'
       },
       submitText:{
-          color: consts.COLORS.OFF_WHITE,
+          color: consts.COLORS.WHITE,
           textAlign:'center',
           fontSize: 18,
       }

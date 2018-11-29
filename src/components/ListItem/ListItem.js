@@ -20,7 +20,7 @@ class ListItem extends PureComponent {
 
         return (
             <View style={styles.conteiner}>
-                <TouchableWithoutFeedback onPress={this.onPressed} style={{backgroundColor: consts.COLORS.OFF_WHITE}}>
+                <TouchableWithoutFeedback onPress={this.onPressed} style={{backgroundColor: consts.COLORS.WHITE}}>
                     <View style={[styles.cardBox, style]} pointerEvents="box-only">
                         <Row style={styles.topSection}>
                             <Image style={styles.imageStyle} source={{uri: imageDownloadURL}} />
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         padding: 8
     },
     cardBox: {
-      backgroundColor: consts.COLORS.OFF_WHITE,
+      backgroundColor: consts.COLORS.WHITE,
       marginHorizontal: 8,
       borderRadius: 4,
       ...getPlatformElevation(4),
