@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { View, ActivityIndicator, ScrollView, StyleSheet, Image } from 'react-native';
+import { View, ActivityIndicator, FlatList, StyleSheet, Image } from 'react-native';
 import firebase from 'react-native-firebase';
 import consts from '../../utils/Constants';
+
+const ITEMS_IN_ROW = 3;
 
 export default class DonorsList extends Component {
   constructor(props) {
@@ -18,12 +20,27 @@ export default class DonorsList extends Component {
 
   componentDidMount() {
     this.ref.doc(consts.PARAM_KEYS.DONORS_IMAGE_DOWNLOAD_LINKS).get().then((querySnapshot) => {
-        var links = [];
+        var rows = [];
+        var allLinks = querySnapshot.data()['value'];
 
-        querySnapshot.data()['value'].forEach(link => links.push({key: link}));
-
-        this.setState({imagesLinks: links, loading: false});
+        for (let index = 0; index < allLinks.length; index++) {
+          const element = allLinks[index];
+          if (!rows[parseInt(index / 3)]) {
+            rows.push([]);
+          }
+          rows[parseInt(index / 3)].push(element);
+        }
+        
+        this.setState({imagesLinks: rows, loading: false});
     });
+  }
+
+  renderItem = row => {
+    const images = row.item.map(image => <Image source={{uri: image}} style={styles.imageStyle} />)
+
+    return (<View style={styles.listRow}>
+      {images}
+    </View>);
   }
 
   render() {
@@ -34,11 +51,13 @@ export default class DonorsList extends Component {
                 </View>);
     }
 
-    const images = this.state.imagesLinks.map(link => <Image source={{uri: link.key}} style={styles.imageStyle} />)
     return (
-      <ScrollView style={styles.container}>
-        {images}
-      </ScrollView>
+      <View style={styles.container}>
+        <FlatList
+          data={this.state.imagesLinks}
+          renderItem={this.renderItem}
+        />
+      </View>
     );
   }
 }
@@ -48,10 +67,18 @@ const styles = StyleSheet.create({
         ...StyleSheet.absoluteFillObject,
         bottom: 64,
         backgroundColor: 'transparent',
+        justifyContent: 'center',
+        alignItems: 'center',
       },
       imageStyle: {
         alignSelf: 'stretch',
         height: 50,
         width: 50
       },
+      listRow: {
+        justifyContent: 'center',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        flex: 1,
+      }
 });
