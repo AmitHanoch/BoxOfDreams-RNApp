@@ -3,7 +3,7 @@ import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 
 import { ListItem } from '../../components';
 import firebase from 'react-native-firebase';
-import consts from '../../utils/Constants';
+import { consts } from '../../utils';
 
 const PAGE_SIZE = 3;
 
@@ -91,7 +91,7 @@ class List extends PureComponent {
       // if we load data for the first time we won't show a list
       if (this.state.loading && this.state.dreams.length === 0) {
         return (<View style={styles.container}>
-                  <ActivityIndicator size="large" color="rgb(38,122,204)" style={styles.largeLoadingStyle} />
+                  <ActivityIndicator size="large" color={consts.COLORS.PRIMARY_BLUE} style={styles.largeLoadingStyle} />
                 </View>);
       }
       
@@ -109,7 +109,7 @@ class List extends PureComponent {
             />
           </View>
 
-          {this.state.loading ? <ActivityIndicator size="large" color="rgb(38,122,204)" style={styles.smallLoadingStyle}/> : null}
+          {this.state.loading ? <ActivityIndicator size="large" color={consts.COLORS.PRIMARY_BLUE} style={styles.smallLoadingStyle}/> : null}
         </View>
       );
     }

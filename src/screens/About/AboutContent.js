@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import firebase from 'react-native-firebase';
-import consts from '../../utils/Constants';
+import { consts } from '../../utils';
 
 export default class AboutContent extends Component {
   constructor(props) {
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         width: '100%',
         padding: 8,
-        color: 'rgb(74,74,74)',
+        color: consts.COLORS.PRIMARY_TEXT,
         fontSize: 16,
         lineHeight: 23,
         textAlign: 'right',

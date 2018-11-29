@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import { Text, Dimensions, StyleSheet } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
+import consts from '../../utils/Constants';
+
 
 /* 
     Props:
@@ -25,10 +27,10 @@ export default class Tabs extends PureComponent {
             style={styles.tabViewStyle}
             renderLabel={(tabRoute) => {
               if (tabRoute.route.key == this.state.index){
-                  return (<Text style={[styles.labelStyle, {color: 'rgb(38,112,204)'}]}> {tabRoute.route.title} </Text>);
+                  return (<Text style={[styles.labelStyle, {color: consts.COLORS.PRIMARY_BLUE}]}> {tabRoute.route.title} </Text>);
               }
     
-              return (<Text style={[styles.labelStyle, {color: 'rgb(156,156,156)'}]}> {tabRoute.route.title} </Text>);
+              return (<Text style={[styles.labelStyle, {color: consts.COLORS.GREY}]}> {tabRoute.route.title} </Text>);
             }}
           />);
     }
@@ -49,14 +51,14 @@ export default class Tabs extends PureComponent {
 
 const styles = StyleSheet.create({
     tabViewStyle: {
-      backgroundColor: 'white'
+      backgroundColor: consts.COLORS.WHITE
     },
     labelStyle: {
       color: 'black',
       fontWeight: 'bold',
     },
     indicatorStyle: {
-      backgroundColor: 'rgb(38,112,204)'
+      backgroundColor: consts.COLORS.PRIMARY_BLUE
     },
     titleContainer: {
       width: 149,

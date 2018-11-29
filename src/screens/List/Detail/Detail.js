@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
-import { View, StyleSheet, Text, TouchableHighlight } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import DetailToolbar from './DetailToolbar';
 
-import { getPlatformElevation } from '../../../utils';
+import { getPlatformElevation, consts } from '../../../utils';
 import { Row, StyledButton } from '../../../components';
 
 /*
@@ -23,7 +23,7 @@ class Detail extends PureComponent {
                     </Text>
                 </Row>
                 <Text style={styles.regularText}>
-                    <Text style={[styles.regularText, {fontWeight: 'bold', color: 'rgb(22,94,181)'}]}>
+                    <Text style={[styles.regularText, {fontWeight: 'bold', color: consts.COLORS.PRIMARY_BLUE}]}>
                         שתפו 
                     </Text>
                     {" "}
@@ -81,7 +81,7 @@ class Detail extends PureComponent {
 const styles = StyleSheet.create({
     container: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: '#f5f6f5'
+      backgroundColor: consts.COLORS.OFF_WHITE
     },
     cardBox: {
       backgroundColor: 'white',
@@ -102,18 +102,18 @@ const styles = StyleSheet.create({
         alignSelf: 'stretch',
         padding: 16,
         fontSize: 14,
-        color: 'rgb(74,74,74)'
+        color: consts.COLORS.PRIMARY_TEXT
     },
     horizontalLine: {
         paddingHorizontal: 32,
         width: "100%",
-        borderBottomColor: 'rgb(156,156,156)',
+        borderBottomColor: consts.COLORS.GREY,
         borderBottomWidth: 1,
     },
     regularText: {
         textAlign: 'right',
         fontSize: 14,
-        color: 'rgb(74,74,74)',
+        color: consts.COLORS.PRIMARY_TEXT,
         width: '100%'
     }
   });

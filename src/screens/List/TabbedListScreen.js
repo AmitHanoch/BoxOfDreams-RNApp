@@ -5,6 +5,7 @@ import { SceneMap } from 'react-native-tab-view';
 import { Toolbar, Tabs }from '../../components';
 import List from './List';
 import assets from '../../assets';
+import { consts } from '../../utils';
 
 
 export default class TabbedListScreen extends PureComponent {
@@ -42,7 +43,7 @@ export default class TabbedListScreen extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#f5f6f5',
+    backgroundColor: consts.COLORS.OFF_WHITE,
   },  
   titleContainer: {
     width: 149,

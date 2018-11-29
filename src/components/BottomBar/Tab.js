@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import assets from '../../assets';
+import consts from '../../utils/Constants';
 
 /*
     Props:
@@ -60,11 +61,11 @@ const styles = StyleSheet.create({
     },
     tabTitle: {
       marginBottom: 2,
-      color: '#9c9c9c'
+      color: consts.COLORS.GREY,
     },
     tabTitleSelected: {
       marginBottom: 2,
       fontWeight: 'bold',
-      color: 'rgb(38,112,204)'
+      color: consts.COLORS.PRIMARY_BLUE
     }
 });

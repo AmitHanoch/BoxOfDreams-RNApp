@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Image, Text, View, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 
-import { getPlatformElevation } from '../../utils';
+import { getPlatformElevation, consts } from '../../utils';
 import Row from '../Row';
 
 /*
@@ -20,7 +20,7 @@ class ListItem extends PureComponent {
 
         return (
             <View style={styles.conteiner}>
-                <TouchableWithoutFeedback onPress={this.onPressed} style={{backgroundColor: '#f5f6f5'}}>
+                <TouchableWithoutFeedback onPress={this.onPressed} style={{backgroundColor: consts.COLORS.OFF_WHITE}}>
                     <View style={[styles.cardBox, style]} pointerEvents="box-only">
                         <Row style={styles.topSection}>
                             <Image style={styles.imageStyle} source={{uri: imageDownloadURL}} />
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         padding: 8
     },
     cardBox: {
-      backgroundColor: 'white',
+      backgroundColor: consts.COLORS.OFF_WHITE,
       marginHorizontal: 8,
       borderRadius: 4,
       ...getPlatformElevation(4),

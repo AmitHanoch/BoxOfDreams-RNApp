@@ -6,7 +6,11 @@ const consts = {
         CREATION: 'creation'
     },
     COLORS: {
-        PRIMARY_BLUE: 'rgb(38,112,204)'
+        PRIMARY_BLUE: 'rgb(38,112,204)',
+        GREY: 'rgb(156,156,156)',
+        OFF_WHITE: '#f5f6f5',
+        WHITE: '#fff',
+        PRIMARY_TEXT: 'rgb(74,74,74)'
     },
     PARAM_KEYS: {
         ABOUT: 'About',

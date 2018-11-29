@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { StyleSheet } from 'react-native';
 
 import Row from '../Row';
-import { getPlatformElevation } from '../../utils';
+import { getPlatformElevation, consts } from '../../utils';
 import Tab from './Tab';
 
 const tabs = [
@@ -57,7 +57,7 @@ class BottomBar extends PureComponent {
 
 const styles = StyleSheet.create({
     container: {
-      backgroundColor: 'rgb(245,246,245)',
+      backgroundColor: consts.COLORS.OFF_WHITE,
       ...getPlatformElevation(4),
       height: 64,
       paddingHorizontal: 16,

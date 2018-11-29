@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import { Toolbar, StyledTextInput, StyledButton } from '../../components';
-import { getPlatformElevation } from '../../utils';
+import { getPlatformElevation, consts } from '../../utils';
 
 export default class ContactScreen extends PureComponent {
   constructor(props){
@@ -41,7 +41,7 @@ export default class ContactScreen extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#f5f6f5',
+    backgroundColor: consts.COLORS.OFF_WHITE,
   },  
   content: {
     padding: 25,
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   toolBarTitle: {
-    color: 'rgb(38,112,204)',
+    color: consts.COLORS.PRIMARY_BLUE,
     fontWeight: 'bold',
     fontSize: 24,
     alignSelf: 'center'
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     textAlign: 'center',
     fontSize: 15,
-    color: 'rgb(74,74,74)'
+    color: consts.COLORS.PRIMARY_TEXT
   },
   spaceTop: {
     marginTop: 32

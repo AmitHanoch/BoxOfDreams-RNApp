@@ -4,8 +4,8 @@ import { SceneMap } from 'react-native-tab-view';
 
 import { Toolbar, Tabs } from '../../components';
 import AboutContent from './AboutContent';
-import consts from '../../utils/Constants';
 import DonorsList from './DonorstList';
+import { consts } from '../../utils';
 
 const AboutRoute = () => (
   <AboutContent paramValue={consts.PARAM_KEYS.ABOUT} />
@@ -48,10 +48,10 @@ export default class TabbedAboutScreen extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#f5f6f5',
+    backgroundColor: consts.COLORS.OFF_WHITE,
   },  
   titleContainer: {
-    color: 'rgb(38,112,204)',
+    color: consts.COLORS.PRIMARY_BLUE,
     fontWeight: 'bold',
     fontSize: 24,
     alignSelf: 'center'
