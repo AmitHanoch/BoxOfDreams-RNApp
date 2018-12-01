@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, ScrollView, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import firebase from 'react-native-firebase';
 import { consts } from '../../utils';
 
@@ -7,7 +7,7 @@ export default class AboutContent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        text: "",
+        text: [],
         loading: true
     };
   }
@@ -18,25 +18,29 @@ export default class AboutContent extends Component {
 
   componentDidMount() {
       this.ref.doc(this.props.paramValue).get().then((querySnapshot) => {
-            this.setState({
-                text: querySnapshot.data()['value'],
-                loading: false
-            });
+        var unformattedText = querySnapshot.data()['value'];
+
+        this.setState({
+            text: unformattedText.split('lineDrop'),
+            loading: false
+        });
       });
   }
 
   render() {
+    const textByRows = this.state.text.map((row) => <Text style={styles.contentText}>{row.trim()}</Text>)
+
     // if we load data for the first time we won't show a list
     if (this.state.loading) {
-        return (<View style={styles.container}>
-                <ActivityIndicator size="large" color={consts.COLORS.PRIMARY_BLUE} style={styles.largeLoadingStyle} />
-            </View>);
+        return (<View style={[styles.container, styles.center]}>
+                  <ActivityIndicator size="large" color={consts.COLORS.PRIMARY_BLUE} style={styles.largeLoadingStyle} />
+                </View>);
     }
 
     return (
-        <Text style={styles.contentText}>
-            {this.state.text}
-        </Text>
+        <ScrollView style={styles.container}>
+            {textByRows}
+        </ScrollView>
     );
   }
 }
@@ -45,10 +49,8 @@ const styles = StyleSheet.create({
     contentText: {
         backgroundColor: 'transparent',
         width: '100%',
-        padding: 8,
         color: consts.COLORS.PRIMARY_TEXT,
         fontSize: 16,
-        lineHeight: 23,
         textAlign: 'right',
         writingDirection: 'rtl'
       },
@@ -61,8 +63,11 @@ const styles = StyleSheet.create({
       container: {
         ...StyleSheet.absoluteFillObject,
         bottom: 64,
+        backgroundColor: 'transparent',
+        padding: 8,
+      },
+      center: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'transparent',
-      },
+      }
 });
