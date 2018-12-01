@@ -20,20 +20,26 @@ export default class DonorsList extends Component {
 
   componentDidMount() {
     this.ref.doc(consts.PARAM_KEYS.DONORS_IMAGE_DOWNLOAD_LINKS).get().then((querySnapshot) => {
-        var rows = [];
         var allLinks = querySnapshot.data()['value'];
 
-        for (let index = 0; index < allLinks.length; index++) {
-          const element = allLinks[index];
-          const rowNumber = parseInt(index / ITEMS_IN_ROW);
-          if (!rows[rowNumber]) {
-            rows.push({key: rowNumber.toString(), urls: []});
-          }
-          rows[rowNumber].urls.push(element);
-        }
-        
-        this.setState({imagesLinks: rows, loading: false});
+        // We need to format the list to a matrix of -n- rows and 3 (ITEMS_IN_ROW) colums in here we do that - splitListToMatrix
+        this.setState({imagesLinks: this.splitListToMatrix(allLinks), loading: false});
     });
+  }
+
+  splitListToMatrix(list) {
+    var rows = [];
+
+    for (let index = 0; index < list.length; index++) {
+      const element = list[index];
+      const rowNumber = parseInt(index / ITEMS_IN_ROW);
+      if (!rows[rowNumber]) {
+        rows.push({key: rowNumber.toString(), urls: []});
+      }
+      rows[rowNumber].urls.push(element);
+    }
+
+    return rows;
   }
 
   renderItem = row => {

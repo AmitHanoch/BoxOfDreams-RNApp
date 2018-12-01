@@ -20,6 +20,7 @@ export default class AboutContent extends Component {
       this.ref.doc(this.props.paramValue).get().then((querySnapshot) => {
         var unformattedText = querySnapshot.data()['value'];
 
+        // Firestore won't store line drops - so i made this constant string to be replaced with a line drop
         this.setState({
             text: unformattedText.split('lineDrop'),
             loading: false
