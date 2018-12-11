@@ -52,7 +52,7 @@ class Detail extends PureComponent {
     }
 
     wantToHelpPress = dream => {
-        // TODO: navigate to contacts
+        this.props.navigation.navigate('Contact', { dreamRef: dream });
     }
 
     onBackPressed = () => {
@@ -60,7 +60,7 @@ class Detail extends PureComponent {
     };
 
     render() {
-        const item  = this.props.navigation.getParam('item');
+        const item = this.props.navigation.getParam('item');
 
         return (
             <View style={styles.container}>

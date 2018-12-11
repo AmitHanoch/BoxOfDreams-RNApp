@@ -15,6 +15,19 @@ export default class ContactScreen extends PureComponent {
     
   }
 
+  renderDreamRef = () => {
+    const dreamRef = this.props.navigation.getParam('dreamRef');
+    if (dreamRef == undefined) {
+      return null;
+    }
+
+    return(
+      <View style={styles.dreamReference}>
+        <Text style={[styles.text, styles.dreamReferenceText]}>נשלח בהקשר לחלום: {dreamRef.dreamName}</Text>
+      </View>
+    );
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -32,7 +45,10 @@ export default class ContactScreen extends PureComponent {
           <StyledButton onPressCallback={this.submit} text="שלח" style={styles.spaceTop}/>
 
           <Text style={styles.text}>העמותה אינה מחוייבת לקבל לטיפולה או להגשים את כל החלומות המתקבלים</Text>
+
         </View>
+
+        {this.renderDreamRef()}
       </View>
     );
   }
@@ -62,6 +78,16 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: consts.COLORS.PRIMARY_TEXT
   },
+  dreamReference: {
+    position: 'absolute',
+    bottom: 0,
+    padding: 16,
+    width: '100%',
+    backgroundColor: consts.COLORS.PRIMARY_BLUE,
+  },
+  dreamReferenceText: {
+    color: consts.COLORS.WHITE
+  },  
   spaceTop: {
     marginTop: 32
   }

@@ -60,6 +60,7 @@ const AppNavigator = createStackNavigator(
   {
     Home: {screen: HomeScreen},
     Detail: {screen: Detail},
+    Contact: {screen: ContactScreen}
   },
   {
     initialRouteName: "Home",

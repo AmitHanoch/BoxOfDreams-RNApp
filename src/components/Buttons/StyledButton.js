@@ -10,7 +10,7 @@ const StyledButton = ({
 }) => (
     <TouchableHighlight
         style={[styles.submit, style]}
-        onPress={() => onPressCallback(item)}
+        onPress={() => onPressCallback()}
         underlayColor={consts.COLORS.OFF_WHITE}>
             <Text style={styles.submitText}>{text}</Text>
     </TouchableHighlight>
