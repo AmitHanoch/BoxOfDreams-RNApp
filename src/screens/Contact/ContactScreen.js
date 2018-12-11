@@ -16,6 +16,10 @@ export default class ContactScreen extends PureComponent {
   }
 
   renderDreamRef = () => {
+    if (this.props.navigation == undefined) {
+      return null;
+    }
+
     const dreamRef = this.props.navigation.getParam('dreamRef');
     if (dreamRef == undefined) {
       return null;
