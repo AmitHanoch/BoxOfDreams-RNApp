@@ -79,16 +79,10 @@ const styles = StyleSheet.create({
       },
       frame: {
         margin: 8,
-        borderColor: consts.COLORS.WHITE,
-        borderWidth: 1,
-        padding: 4,
-        borderRadius: 50,
         height: 100,
         width: 100,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: consts.COLORS.WHITE,
-        ...getPlatformElevation(16)
       },
       imageStyle: {
         resizeMode: 'contain',
