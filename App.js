@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, I18nManager} from 'react-native';
+import { View, StyleSheet, I18nManager, AsyncStorage, Alert} from 'react-native';
 
 import TabbedListScreen from  './src/screens/List/TabbedListScreen';
 import { BottomBar } from './src/components';
@@ -8,6 +8,7 @@ import { createStackNavigator, createAppContainer } from 'react-navigation';
 import Detail from './src/screens/List/Detail/Detail';
 import ContactScreen from './src/screens/Contact/ContactScreen';
 import { getPlatformElevation } from './src/utils';
+import firebase from 'react-native-firebase';
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -74,6 +75,106 @@ export default class App extends React.Component {
   componentWillMount() {
     I18nManager.allowRTL(true);
     I18nManager.forceRTL(true);
+  }
+  
+  componentWillUnmount(){
+    this.onTokenRefreshListener();
+    this.notificationListener();
+    this.notificationOpenedListener();
+    this.messageListener();
+  }
+
+  componentDidMount() {
+    this.checkPermission();
+    this.createNotificationListeners();
+  }
+
+  checkPermission() {
+    firebase.messaging().hasPermission()
+      .then(enabled => {
+      if (enabled) {
+        this.getToken();
+      } else {
+        this.requestPermission();
+      } 
+    });
+  }
+
+  getToken() {
+    AsyncStorage.getItem('fcmToken')
+      .then(fcmToken => {
+        if (!fcmToken) {
+            firebase.messaging().getToken().then(fcmToken => {
+              if (fcmToken) {
+                // user has a device token
+                AsyncStorage.setItem('fcmToken', fcmToken).then(saved => {});
+              }
+            });
+            this.onTokenRefreshListener = firebase.messaging().onTokenRefresh(fcmToken => {
+                // user has a device token
+                AsyncStorage.setItem('fcmToken', fcmToken).then(saved => {});
+            });
+        }
+      });
+  }
+
+  requestPermission() {
+    firebase.messaging().requestPermission()
+      .then(() => {
+        // User has authorised
+        this.getToken();
+      })
+      .catch(error => {
+        // User has rejected permissions  
+        console.log('permission rejected');
+      }); 
+  }
+
+  createNotificationListeners() {
+    /*
+    * Triggered when a particular notification has been received in foreground
+    * */
+    this.notificationListener = firebase.notifications().onNotification((notification) => {
+      const { title, body } = notification;
+      this.showAlert(title, body);
+    });
+
+    /*
+    * If your app is in background, you can listen for when a notification is clicked / tapped / opened as follows:
+    * */
+    this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
+        const { title, body } = notificationOpen.notification;
+        this.showAlert(title, body);
+    });
+
+    /*
+    * If your app is closed, you can check if it was opened by a notification being clicked / tapped / opened as follows:
+    * */
+    firebase.notifications().getInitialNotification().then(notificationOpen => {
+      if (notificationOpen) {
+          const { title, body } = notificationOpen.notification;
+          this.showAlert(title, body);
+      }
+    });
+
+     /*
+    * Triggered for data only payload in foreground
+    * */
+    this.messageListener = firebase.messaging().onMessage((message) => {
+      //process data message
+      this.showAlert("olam", JSON.stringify(message));
+    });
+  }
+  
+
+  showAlert(title, body) {
+    Alert.alert(
+      title, body,
+      [
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+      ],
+      { cancelable: false },
+    );
   }
 
   render() {
