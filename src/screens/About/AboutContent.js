@@ -22,14 +22,14 @@ export default class AboutContent extends Component {
 
         // Firestore won't store line drops - so i made this constant string to be replaced with a line drop
         this.setState({
-            text: unformattedText.split('lineDrop'),
+            text:  unformattedText.split('lineDrop').map(part => { return ({key: part}); }),
             loading: false
         });
       });
   }
 
   render() {
-    const textByRows = this.state.text.map((row) => <Text style={styles.contentText}>{row.trim()}</Text>)
+    const textByRows = this.state.text.map((row) => <Text style={styles.contentText}>{row.key.trim()}</Text>)
 
     // if we load data for the first time we won't show a list
     if (this.state.loading) {
