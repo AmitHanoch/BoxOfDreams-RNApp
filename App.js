@@ -11,15 +11,18 @@ import { getPlatformElevation } from './src/utils';
 import firebase from 'react-native-firebase';
 
 class HomeScreen extends React.Component {
+  // --------- View for screen ---------
   constructor(props) {
     super(props);
     this.state = {
       selectedTabIndex: 0
     };
   }
+
   onTabPress = p_tabIndex => {
     this.setState({selectedTabIndex: p_tabIndex});
   }
+
   renderTabContent(navigate){
     switch (this.state.selectedTabIndex) {
       case 0:
@@ -32,6 +35,7 @@ class HomeScreen extends React.Component {
         return null;
     }
   }
+
   render() {
     const {navigate} = this.props.navigation;
     return (
@@ -76,7 +80,9 @@ export default class App extends React.Component {
     I18nManager.allowRTL(true);
     I18nManager.forceRTL(true);
   }
-  
+
+  // --------- Stuff for notifications ---------
+
   componentWillUnmount(){
     this.onTokenRefreshListener();
     this.notificationListener();
@@ -87,8 +93,6 @@ export default class App extends React.Component {
   componentDidMount() {
     this.checkPermission();
     this.createNotificationListeners();
-    I18nManager.allowRTL(true);
-    I18nManager.forceRTL(true);
   }
 
   checkPermission() {
@@ -137,16 +141,15 @@ export default class App extends React.Component {
     * Triggered when a particular notification has been received in foreground
     * */
     this.notificationListener = firebase.notifications().onNotification((notification) => {
-      const { title, body } = notification;
-      this.showAlert(title, body);
+        // for now we do nothing when application is in foreground
     });
 
     /*
     * If your app is in background, you can listen for when a notification is clicked / tapped / opened as follows:
     * */
     this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
-        const { title, body } = notificationOpen.notification;
-        this.showAlert(title, body);
+        const { data } = notificationOpen.notification;
+        this.showAlert(data.dream, "_______");
     });
 
     /*
@@ -154,8 +157,8 @@ export default class App extends React.Component {
     * */
     firebase.notifications().getInitialNotification().then(notificationOpen => {
       if (notificationOpen) {
-          const { title, body } = notificationOpen.notification;
-          this.showAlert(title, body);
+          const { data } = notificationOpen.notification;
+          this.showAlert(data.dream, "_______");
       }
     });
   }
