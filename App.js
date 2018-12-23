@@ -87,6 +87,8 @@ export default class App extends React.Component {
   componentDidMount() {
     this.checkPermission();
     this.createNotificationListeners();
+    I18nManager.allowRTL(true);
+    I18nManager.forceRTL(true);
   }
 
   checkPermission() {
@@ -156,17 +158,8 @@ export default class App extends React.Component {
           this.showAlert(title, body);
       }
     });
-
-     /*
-    * Triggered for data only payload in foreground
-    * */
-    this.messageListener = firebase.messaging().onMessage((message) => {
-      //process data message
-      this.showAlert("olam", JSON.stringify(message));
-    });
   }
   
-
   showAlert(title, body) {
     Alert.alert(
       title, body,
