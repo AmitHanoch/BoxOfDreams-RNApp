@@ -5,7 +5,7 @@ import { ListItem } from '../../components';
 import firebase from 'react-native-firebase';
 import { consts } from '../../utils';
 
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 4;
 
 /*
   Props:
@@ -103,7 +103,7 @@ class List extends PureComponent {
                 keyExtractor={item => item.key}
                 renderItem={this.renderItem}
                 onEndReached={this.loadMoreDreams}
-                onEndReachedThreshold={1}
+                onEndReachedThreshold={0.3}
                 onRefresh={this.refreshDreams}
                 refreshing={this.state.refreshing}
             />
