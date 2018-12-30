@@ -10,7 +10,8 @@ const consts = {
         GREY: 'rgb(156,156,156)',
         OFF_WHITE: '#f5f6f5',
         WHITE: '#fff',
-        PRIMARY_TEXT: 'rgb(74,74,74)'
+        PRIMARY_TEXT: 'rgb(74,74,74)',
+        BLACK: '#000'
     },
     PARAM_KEYS: {
         ABOUT: 'About',

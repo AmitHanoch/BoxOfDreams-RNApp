@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, I18nManager, AsyncStorage, Alert} from 'react-native';
+import { View, SafeAreaView, StyleSheet, I18nManager, Alert} from 'react-native';
 
 import TabbedListScreen from  './src/screens/List/TabbedListScreen';
 import { BottomBar } from './src/components';
@@ -7,8 +7,7 @@ import TabbedAboutScreen from './src/screens/About/TabbedAboutScreen';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import Detail from './src/screens/List/Detail/Detail';
 import ContactScreen from './src/screens/Contact/ContactScreen';
-import { getPlatformElevation } from './src/utils';
-import firebase from 'react-native-firebase';
+import { getPlatformElevation, consts } from './src/utils';
 
 class HomeScreen extends React.Component {
   // --------- View for screen ---------
@@ -39,10 +38,12 @@ class HomeScreen extends React.Component {
   render() {
     const {navigate} = this.props.navigation;
     return (
-      <View style={styles.container}>
-        {this.renderTabContent(navigate)}    
-        <BottomBar style={styles.footer} onTabPress={this.onTabPress} />
-      </View>
+      <SafeAreaView style={{flex: 1, backgroundColor: consts.COLORS.WHITE}}>
+        <View style={styles.container}>
+          {this.renderTabContent(navigate)}    
+          <BottomBar style={styles.footer} onTabPress={this.onTabPress} />
+        </View>
+      </SafeAreaView>
     );
   }
 }
@@ -53,7 +54,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   footer: {
-    ...getPlatformElevation(16),
     position: 'absolute',
     bottom: 0,
     right: 0,

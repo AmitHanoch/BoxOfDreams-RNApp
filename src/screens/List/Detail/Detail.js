@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, SafeAreaView } from 'react-native';
 import DetailToolbar from './DetailToolbar';
 
 import { getPlatformElevation, consts } from '../../../utils';
@@ -63,17 +63,19 @@ class Detail extends PureComponent {
         const item = this.props.navigation.getParam('item');
 
         return (
-            <View style={styles.container}>
-                <DetailToolbar image={item.imageDownloadURL} onBackPressed={this.onBackPressed} />
+            <SafeAreaView style={{flex: 1, backgroundColor: consts.COLORS.OFF_WHITE}}>
+                <View style={styles.container}>
+                    <DetailToolbar image={item.imageDownloadURL} onBackPressed={this.onBackPressed} />
 
-                    <View style={styles.cardBox}>
-                        <Text style={styles.titleStyle}> {item.dreamName}</Text>
-                        <View style={styles.horizontalLine}></View>
-                        <Text style={styles.descriptionStyle}> {item.dreamDescription}</Text>
-                    </View>
+                        <View style={styles.cardBox}>
+                            <Text style={styles.titleStyle}> {item.dreamName}</Text>
+                            <View style={styles.horizontalLine}></View>
+                            <Text style={styles.descriptionStyle}> {item.dreamDescription}</Text>
+                        </View>
 
-                    {item.isDone ? this.renderDoneDream() : this.renderOpenDream(item)}
-            </View>
+                        {item.isDone ? this.renderDoneDream() : this.renderOpenDream(item)}
+                </View>
+            </SafeAreaView>
         );
     }
 }

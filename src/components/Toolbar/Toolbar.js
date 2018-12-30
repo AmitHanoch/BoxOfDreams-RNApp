@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { Row } from '../../components';
+import { consts } from '../../utils';
 
 class Toolbar extends PureComponent {
     render() {
@@ -15,7 +16,7 @@ class Toolbar extends PureComponent {
 
 const styles = StyleSheet.create({
     toolbarContainer: {
-      backgroundColor: 'white',
+      backgroundColor: consts.COLORS.WHITE,
       height: 52,
       alignItems: 'center',
       justifyContent: 'center',

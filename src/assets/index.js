@@ -1,5 +1,4 @@
 export default {
-  'Dream': require('./dream.jpg'),
   'Logo': require('./logo.png'),
   'Title': require('./title.png'),
   'TabAbout': require('./tabAbout.png'),
