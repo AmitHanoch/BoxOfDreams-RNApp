@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { View, StyleSheet, Text, SafeAreaView } from 'react-native';
+import { View, StyleSheet, Text, SafeAreaView, I18nManager } from 'react-native';
 import DetailToolbar from './DetailToolbar';
 
 import { getPlatformElevation, consts } from '../../../utils';
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
     descriptionStyle: {
-        textAlign: 'right',
+        textAlign: I18nManager.isRTL ? 'left' : 'right',
         alignSelf: 'stretch',
         padding: 16,
         fontSize: 14,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
     },
     regularText: {
-        textAlign: 'right',
+        textAlign: I18nManager.isRTL ? 'left' : 'right',
         fontSize: 14,
         color: consts.COLORS.PRIMARY_TEXT,
         width: '100%'

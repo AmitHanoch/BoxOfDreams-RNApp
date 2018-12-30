@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, ScrollView, Text, StyleSheet, ActivityIndicator, I18nManager } from 'react-native';
 import firebase from 'react-native-firebase';
 import { consts } from '../../utils';
 
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         width: '100%',
         color: consts.COLORS.PRIMARY_TEXT,
         fontSize: 16,
-        textAlign: 'right',
+        textAlign: I18nManager.isRTL ? 'left' : 'right',
         writingDirection: 'rtl'
       },
       largeLoadingStyle: {
