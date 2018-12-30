@@ -63,11 +63,11 @@ class Detail extends PureComponent {
         const item = this.props.navigation.getParam('item');
 
         return (
-            <SafeAreaView style={{flex: 1, backgroundColor: consts.COLORS.OFF_WHITE}}>
+            <SafeAreaView style={{flex: 1, backgroundColor: consts.COLORS.WHITE}}>
                 <View style={styles.container}>
                     <DetailToolbar image={item.imageDownloadURL} onBackPressed={this.onBackPressed} />
 
-                        <View style={styles.cardBox}>
+                        <View style={[styles.cardBox, {...getPlatformElevation(4)}]}>
                             <Text style={styles.titleStyle}> {item.dreamName}</Text>
                             <View style={styles.horizontalLine}></View>
                             <Text style={styles.descriptionStyle}> {item.dreamDescription}</Text>
@@ -82,12 +82,11 @@ class Detail extends PureComponent {
 
 const styles = StyleSheet.create({
     container: {
-      ...StyleSheet.absoluteFillObject,
+      flex: 1,
       backgroundColor: consts.COLORS.OFF_WHITE
     },
     cardBox: {
       backgroundColor: consts.COLORS.WHITE,
-      ...getPlatformElevation(4),
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
