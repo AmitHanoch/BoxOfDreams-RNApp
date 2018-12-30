@@ -36,7 +36,7 @@ export default class ContactScreen extends PureComponent {
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: consts.COLORS.WHITE}}>
         <View style={styles.container}>
-          <Toolbar>
+          <Toolbar style={styles.toolbar}>
             <Text style={styles.toolBarTitle}>צור קשר</Text>
           </Toolbar>
           <View style={styles.content}>
@@ -95,5 +95,12 @@ const styles = StyleSheet.create({
   },  
   spaceTop: {
     marginTop: 32
+  },
+  toolbar: {
+    ...getPlatformElevation(2),
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
   }
 });

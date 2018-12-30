@@ -54,6 +54,11 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   footer: {
+    ...getPlatformElevation(2),
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
     position: 'absolute',
     bottom: 0,
     right: 0,

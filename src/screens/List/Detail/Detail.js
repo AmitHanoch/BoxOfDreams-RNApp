@@ -16,7 +16,7 @@ class Detail extends PureComponent {
 
     renderDoneDream = () => {
         return(
-            <View style={[styles.cardBox, {position: 'absolute', bottom: 0, padding: 8}]}>
+            <View style={[styles.cardBox, styles.contentSection]}>
                 <Row>
                     <Text style={[styles.regularText, {fontSize: 18, fontWeight: 'bold'}]}>
                         התרגשתם?
@@ -37,7 +37,7 @@ class Detail extends PureComponent {
 
     renderOpenDream = item => {
         return(
-            <View style={[styles.cardBox, {position: 'absolute', bottom: 0, padding: 8}]}>
+            <View style={[styles.cardBox, styles.contentSection]}>
                 <Text style={styles.titleStyle}>
                     בכדי להגשים את החלום אנחנו צריכים
                 </Text>
@@ -116,6 +116,16 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: consts.COLORS.PRIMARY_TEXT,
         width: '100%'
+    },
+    contentSection: {
+        position: 'absolute',
+        bottom: 0,
+        padding: 8,
+        ...getPlatformElevation(2),
+        shadowOffset: {
+        width: 0,
+        height: -2,
+        },
     }
   });
 
