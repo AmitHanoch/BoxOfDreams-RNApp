@@ -17,10 +17,13 @@ const StyledTextInput = ({
 
 const styles = StyleSheet.create({
     inputStyle: {
+        textAlign: 'right',
         width: '100%',
         fontSize: 15,
         borderBottomColor: consts.COLORS.PRIMARY_BLUE,
         borderBottomWidth: 1,
+        marginVertical: 8,
+        
     }
 });
 
