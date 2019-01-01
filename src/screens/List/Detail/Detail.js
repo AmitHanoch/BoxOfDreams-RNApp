@@ -68,9 +68,9 @@ class Detail extends PureComponent {
                     <DetailToolbar image={item.imageDownloadURL} onBackPressed={this.onBackPressed} />
 
                         <View style={[styles.cardBox, {...getPlatformElevation(4)}]}>
-                            <Text style={styles.titleStyle}> {item.dreamName}</Text>
+                            <Text style={styles.titleStyle}>{item[consts.DREAM_OBJECT_FIELDS.DREAM_NAME]}</Text>
                             <View style={styles.horizontalLine}></View>
-                            <Text style={styles.descriptionStyle}> {item.dreamDescription}</Text>
+                            <Text style={styles.descriptionStyle}>{item[consts.DREAM_OBJECT_FIELDS.DREAM_DESCRIPTION]}</Text>
                         </View>
 
                         {item.isDone ? this.renderDoneDream() : this.renderOpenDream(item)}

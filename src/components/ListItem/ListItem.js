@@ -26,7 +26,7 @@ class ListItem extends PureComponent {
                             <Image style={styles.imageStyle} source={{uri: imageDownloadURL}} />
                         </Row>
                         <Row style={styles.bottomSection}>
-                            <Text style={styles.titleStyle}> {dreamName}</Text>
+                            <Text style={styles.titleStyle}>{dreamName}</Text>
                         </Row>
                     </View>
                 </TouchableWithoutFeedback>

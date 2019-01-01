@@ -3,7 +3,9 @@ const consts = {
     DREAMS_COLLECTION_NAME: 'Dreams',
     DREAM_OBJECT_FIELDS: {
         IS_DONE: 'isDone',
-        CREATION: 'creation'
+        CREATION: 'creation',
+        DREAM_NAME: 'dreamName',
+        DREAM_DESCRIPTION: 'dreamDescription'
     },
     COLORS: {
         PRIMARY_BLUE: 'rgb(38,112,204)',
