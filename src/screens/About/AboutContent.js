@@ -62,10 +62,10 @@ const styles = StyleSheet.create({
         transform: [{ scale: 2 }]
       },
       container: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         bottom: 64,
         backgroundColor: 'transparent',
-        padding: 8,
+        margin: 8,
       },
       center: {
         justifyContent: 'center',

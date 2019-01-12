@@ -8,11 +8,15 @@ import DonorsList from './DonorstList';
 import { consts } from '../../utils';
 
 const AboutRoute = () => (
-  <AboutContent paramValue={consts.PARAM_KEYS.ABOUT} />
+  <View style={styles.content}>
+    <AboutContent paramValue={consts.PARAM_KEYS.ABOUT} />
+  </View>
 );
 
 const VisionRoute = () => (
-  <AboutContent paramValue={consts.PARAM_KEYS.VISION} />
+  <View style={styles.content}>
+    <AboutContent paramValue={consts.PARAM_KEYS.VISION} />
+  </View>
 );
 
 const DonorsRoute = () => (
@@ -55,5 +59,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 24,
     alignSelf: 'center'
+  },
+  content: {
+    height: '100%',
   }
  });
