@@ -46,9 +46,9 @@ const styles = StyleSheet.create({
     backgroundColor: consts.COLORS.OFF_WHITE,
   },  
   titleContainer: {
-    width: 149,
-    height: 36,
+    width: 170,
+    height: 55,
     alignSelf: 'center',
-    resizeMode: 'contain'
+    resizeMode: 'stretch'
   },
 });
