@@ -1,18 +1,56 @@
 import React, { PureComponent } from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
 
 import { Toolbar, StyledTextInput, StyledButton } from '../../components';
 import { getPlatformElevation, consts } from '../../utils';
+
+// require the module
+const Frisbee = require('frisbee');
+
+// create a new instance of Frisbee
+const api = new Frisbee({
+  baseURI: 'http://localhost:5000', // optional
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  }
+});
 
 export default class ContactScreen extends PureComponent {
   constructor(props){
     super(props);
 
-    this.state = {};
+    this.state = {
+      loading: false, 
+      name: '', 
+      phone: '', 
+      mail: '', 
+      messageContent: ''
+    };
   }
 
   submit = () => {
-    
+    var reqbody = {
+      name: this.state.name,
+      phone: this.state.phone,
+      mail: this.state.mail,
+      messageContent: this.state.messageContent
+    };
+
+    api.post('/sendmail', { body: reqbody }).then((res) => {
+      if (res.originalResponse.status == 200) {
+        Alert.alert(
+          'הבקשה התקבלה בהצלחה!',
+          'הפרטים שהזנת נשלחו אל העמותה',
+          [
+            {text: 'אוקי', onPress: () => this.setState({loading: false, name: '', phone: '', mail: '', messageContent: ''})},
+          ],
+          { cancelable: false }
+        )
+      }
+    });
+
+    this.setState({loading: true});
   }
 
   renderDreamRef = () => {
@@ -42,12 +80,15 @@ export default class ContactScreen extends PureComponent {
           <View style={styles.content}>
             <Text style={[styles.text, {fontWeight: 'bold'}]}>רוצים להתנדב או לכתוב לנו על חלום של ילד? מלא פרטים ונציג העמותה יצור אתכם קשר</Text>
 
-            <StyledTextInput placeholder="שם מלא" onChangeText={text => this.setState({name: text})} />
-            <StyledTextInput placeholder="טלפון" onChangeText={text => this.setState({phone: text})} />
-            <StyledTextInput placeholder="מייל" onChangeText={text => this.setState({mail: text})} />
-            <StyledTextInput placeholder="מה תרצה לספר לנו?" multiline={true} onChangeText={text => this.setState({messageContent: text})} />
+            <StyledTextInput placeholder="שם מלא" onChangeText={text => this.setState({name: text})} value={this.state.name} editable={!this.state.loading}/>
+            <StyledTextInput placeholder="טלפון" onChangeText={text => this.setState({phone: text})} value={this.state.phone} editable={!this.state.loading}/>
+            <StyledTextInput placeholder="מייל" onChangeText={text => this.setState({mail: text})} value={this.state.mail} editable={!this.state.loading}/>
+            <StyledTextInput placeholder="מה תרצה לספר לנו?" multiline={true} onChangeText={text => this.setState({messageContent: text})} value={this.state.messageContent} editable={!this.state.loading}/>
 
-            <StyledButton onPressCallback={this.submit} text="שלח" style={styles.spaceTop}/>
+            {this.state.loading ? 
+              <ActivityIndicator size="large" color={consts.COLORS.PRIMARY_BLUE} style={styles.smallLoadingStyle}/> 
+              : 
+              <StyledButton onPressCallback={this.submit} text="שלח" style={styles.spaceTop}/>}
 
             <Text style={styles.text}>העמותה אינה מחוייבת לקבל לטיפולה או להגשים את כל החלומות המתקבלים</Text>
           </View>
@@ -102,5 +143,10 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
+  },
+  smallLoadingStyle: {
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    alignItems: 'center',
   }
 });

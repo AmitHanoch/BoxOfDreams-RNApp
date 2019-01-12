@@ -6,13 +6,17 @@ const StyledTextInput = ({
     placeholder,
     style,
     onChangeText,
-    multiline
+    multiline,
+    editable,
+    value
 }) => (
     <TextInput 
         style={[styles.inputStyle, style]} 
         placeholder={placeholder}
         onChangeText={text => onChangeText(text)}
-        multiline={multiline} />
+        multiline={multiline}
+        editable={editable}
+        value={value} />
 );
 
 const styles = StyleSheet.create({

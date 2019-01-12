@@ -9,6 +9,7 @@
     "fix-adb": "adb reverse tcp:8081 tcp:8081"
   },
   "dependencies": {
+    "frisbee": "^2.0.5",
     "react": "16.6.0-alpha.8af6728",
     "react-native": "0.57.4",
     "react-native-firebase": "^5.0.0",
