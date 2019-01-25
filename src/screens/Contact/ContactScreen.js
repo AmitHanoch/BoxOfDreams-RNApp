@@ -9,7 +9,7 @@ const Frisbee = require('frisbee');
 
 // create a new instance of Frisbee
 const api = new Frisbee({
-  baseURI: 'http://localhost:5000', // optional
+  baseURI: 'http://10.0.0.12:5000', // optional
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
@@ -30,6 +30,29 @@ export default class ContactScreen extends PureComponent {
   }
 
   submit = () => {
+    if (this.validate()) {
+      this.sendMail();
+    } else {
+      Alert.alert(
+        'שגיאה בהזנת הפרטים',
+        'חובה למלא רת כל הפרטים',
+        [
+          {text: 'אוקי', onPress: () => this.setState({loading: false, name: '', phone: '', mail: '', messageContent: ''})},
+        ],
+        { cancelable: false }
+      );
+    }
+  }
+
+  validate = () => {
+    // Check that all the fields has value
+    return (this.state.name.length > 1 &&
+            this.state.phone.length > 1 &&
+            this.state.mail.length > 1 && 
+            this.state.messageContent.length > 1);
+  }
+
+  sendMail = () => {
     var reqbody = {
       name: this.state.name,
       phone: this.state.phone,
@@ -37,7 +60,7 @@ export default class ContactScreen extends PureComponent {
       messageContent: this.state.messageContent
     };
 
-    api.post('/sendmail', { body: reqbody }).then((res) => {
+    api.post('/usercontact', { body: reqbody }).then((res) => {
       if (res.originalResponse.status == 200) {
         Alert.alert(
           'הבקשה התקבלה בהצלחה!',
