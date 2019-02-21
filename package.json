@@ -6,7 +6,8 @@
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
     "android-linux": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && react-native run-android",
-    "fix-adb": "adb reverse tcp:8081 tcp:8081"
+    "fix-adb": "adb reverse tcp:8081 tcp:8081",
+    "emulator": "emulator -avd Nexus_5X_API_28_x86"
   },
   "dependencies": {
     "frisbee": "^2.0.5",
