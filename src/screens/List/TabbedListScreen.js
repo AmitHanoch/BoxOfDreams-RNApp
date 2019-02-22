@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },  
   titleContainer: {
     width: 170,
-    height: 55,
+    height: 70,
     alignSelf: 'center',
     resizeMode: 'stretch'
   },

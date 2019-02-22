@@ -17,7 +17,7 @@ class Toolbar extends PureComponent {
 const styles = StyleSheet.create({
     toolbarContainer: {
       backgroundColor: consts.COLORS.WHITE,
-      height: 52,
+      height: 70,
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: 16,
