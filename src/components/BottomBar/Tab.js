@@ -40,7 +40,7 @@ export default class Tab extends PureComponent {
                         this.props.tab.selectedImageCode : 
                         this.props.tab.imageCode]} 
                 style={styles.tabIcon}/>
-                <Text style={this.state.isSelected ? styles.tabTitleSelected : styles.tabTitle}>
+                <Text style={[styles.titleStyle, this.state.isSelected ? styles.tabTitleSelected : styles.tabTitle]}>
                     {this.props.tab.title}
                 </Text>
               </View>
@@ -59,13 +59,15 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
       resizeMode: 'contain'
     },
+    titleStyle: {
+        marginBottom: 2,
+        fontSize: 15
+    },
     tabTitle: {
-      marginBottom: 2,
       color: consts.COLORS.GREY,
     },
     tabTitleSelected: {
-      marginBottom: 2,
       fontWeight: 'bold',
-      color: consts.COLORS.PRIMARY_BLUE
+      color: consts.COLORS.PRIMARY_BLUE,
     }
 });
