@@ -35,7 +35,7 @@ export default class ContactScreen extends PureComponent {
     } else {
       Alert.alert(
         'שגיאה בהזנת הפרטים',
-        'חובה למלא רת כל הפרטים',
+        'חובה למלא את כל הפרטים',
         [
           {text: 'אוקי', onPress: () => this.setState({loading: false, name: '', phone: '', mail: '', messageContent: ''})},
         ],
@@ -106,7 +106,7 @@ export default class ContactScreen extends PureComponent {
             <StyledTextInput placeholder="שם מלא" onChangeText={text => this.setState({name: text})} value={this.state.name} editable={!this.state.loading}/>
             <StyledTextInput placeholder="טלפון" onChangeText={text => this.setState({phone: text})} value={this.state.phone} editable={!this.state.loading}/>
             <StyledTextInput placeholder="מייל" onChangeText={text => this.setState({mail: text})} value={this.state.mail} editable={!this.state.loading}/>
-            <StyledTextInput placeholder="מה תרצה לספר לנו?" multiline={true} onChangeText={text => this.setState({messageContent: text})} value={this.state.messageContent} editable={!this.state.loading}/>
+            <StyledTextInput style={{marginTop: 16, height: 100}} placeholder="מה תרצה לספר לנו?" multiline={true} onChangeText={text => this.setState({messageContent: text})} value={this.state.messageContent} editable={!this.state.loading}/>
 
             {this.state.loading ? 
               <ActivityIndicator size="large" color={consts.COLORS.PRIMARY_BLUE} style={styles.smallLoadingStyle}/> 
