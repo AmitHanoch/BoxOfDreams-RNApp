@@ -9,7 +9,7 @@ const Frisbee = require('frisbee');
 
 // create a new instance of Frisbee
 const api = new Frisbee({
-  baseURI: 'http://10.0.0.12:5000', // optional
+  baseURI: 'https://boxofdreams-e7838.firebaseapp.com', // optional
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
