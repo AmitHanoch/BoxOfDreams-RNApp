@@ -80,6 +80,9 @@ const AppNavigator = createStackNavigator(
 
 const AppContainer = createAppContainer(AppNavigator);
 
+I18nManager.allowRTL(true);
+I18nManager.forceRTL(true);
+
 export default class App extends React.Component {
   componentWillMount() {
     I18nManager.allowRTL(true);
