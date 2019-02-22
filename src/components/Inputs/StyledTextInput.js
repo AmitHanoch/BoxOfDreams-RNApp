@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput, StyleSheet } from 'react-native';
+import { TextInput, StyleSheet, Platform } from 'react-native';
 import consts from '../../utils/Constants';
 
 const StyledTextInput = ({
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         borderBottomColor: consts.COLORS.PRIMARY_BLUE,
         borderBottomWidth: 1,
-        marginVertical: 8,
+        marginVertical: Platform.OS === 'ios' ? 8 : undefined,
         
     }
 });
