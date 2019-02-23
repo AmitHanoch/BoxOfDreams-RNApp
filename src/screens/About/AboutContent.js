@@ -21,15 +21,25 @@ export default class AboutContent extends Component {
         var unformattedText = querySnapshot.data()['value'];
 
         // Firestore won't store line drops - so i made this constant string to be replaced with a line drop
+        // In order to display them properly we use the unique key as a counter
+        var partsArray = [];
+        var uniqueKeyGenerator = 1;
+        unformattedText.split('lineDrop').forEach(part => {
+          partsArray.push({
+            key: uniqueKeyGenerator++,
+            text: part
+          })
+        });      
+
         this.setState({
-            text:  unformattedText.split('lineDrop').map(part => { return ({key: part}); }),
+            text:  partsArray,
             loading: false
         });
       });
   }
 
   render() {
-    const textByRows = this.state.text.map((row) => <Text style={styles.contentText}>{row.key.trim()}</Text>)
+    const textByRows = this.state.text.map((row) => <Text key={row.key} style={styles.contentText}>{row.text.trim()}</Text>)
 
     // if we load data for the first time we won't show a list
     if (this.state.loading) {

@@ -36,14 +36,14 @@ export default class DonorsList extends Component {
       if (!rows[rowNumber]) {
         rows.push({key: rowNumber.toString(), urls: []});
       }
-      rows[rowNumber].urls.push({key: element});
+      rows[rowNumber].urls.push({key: element.toString()});
     }
 
     return rows;
   }
 
   renderItem = row => {
-    const images = row.item.urls.map(url => <View style={styles.frame}><Image source={{uri: url.key}} style={styles.imageStyle} /></View>)
+    const images = row.item.urls.map(url => <View key={url.key} style={styles.frame}><Image source={{uri: url.key}} style={styles.imageStyle} /></View>)
 
     return (<View style={styles.listRow}>
       {images}
