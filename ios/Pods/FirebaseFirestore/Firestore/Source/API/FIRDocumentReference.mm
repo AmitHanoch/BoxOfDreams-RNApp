@@ -16,6 +16,8 @@
 
 #import "FIRDocumentReference.h"
 
+#import <GRPCClient/GRPCCall.h>
+
 #include <memory>
 #include <utility>
 
@@ -34,18 +36,16 @@
 #import "Firestore/Source/Model/FSTDocumentSet.h"
 #import "Firestore/Source/Model/FSTFieldValue.h"
 #import "Firestore/Source/Model/FSTMutation.h"
+#import "Firestore/Source/Util/FSTAssert.h"
 #import "Firestore/Source/Util/FSTAsyncQueryListener.h"
 #import "Firestore/Source/Util/FSTUsageValidation.h"
 
 #include "Firestore/core/src/firebase/firestore/model/document_key.h"
 #include "Firestore/core/src/firebase/firestore/model/precondition.h"
 #include "Firestore/core/src/firebase/firestore/model/resource_path.h"
-#include "Firestore/core/src/firebase/firestore/util/hard_assert.h"
 #include "Firestore/core/src/firebase/firestore/util/string_apple.h"
 
 namespace util = firebase::firestore::util;
-using firebase::firestore::core::ParsedSetData;
-using firebase::firestore::core::ParsedUpdateData;
 using firebase::firestore::model::DocumentKey;
 using firebase::firestore::model::Precondition;
 using firebase::firestore::model::ResourcePath;
@@ -111,7 +111,7 @@ NS_ASSUME_NONNULL_BEGIN
   if (!collectionPath) {
     FSTThrowInvalidArgument(@"Collection path cannot be nil.");
   }
-  const ResourcePath subPath = ResourcePath::FromString(util::MakeString(collectionPath));
+  const ResourcePath subPath = ResourcePath::FromString(util::MakeStringView(collectionPath));
   const ResourcePath path = self.key.path().Append(subPath);
   return [FIRCollectionReference referenceWithPath:path firestore:self.firestore];
 }
@@ -125,11 +125,6 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)setData:(NSDictionary<NSString *, id> *)documentData
-    mergeFields:(NSArray<id> *)mergeFields {
-  return [self setData:documentData mergeFields:mergeFields completion:nil];
-}
-
-- (void)setData:(NSDictionary<NSString *, id> *)documentData
      completion:(nullable void (^)(NSError *_Nullable error))completion {
   return [self setData:documentData merge:NO completion:completion];
 }
@@ -137,21 +132,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setData:(NSDictionary<NSString *, id> *)documentData
           merge:(BOOL)merge
      completion:(nullable void (^)(NSError *_Nullable error))completion {
-  ParsedSetData parsed =
-      merge ? [self.firestore.dataConverter parsedMergeData:documentData fieldMask:nil]
-            : [self.firestore.dataConverter parsedSetData:documentData];
+  FSTParsedSetData *parsed = merge ? [self.firestore.dataConverter parsedMergeData:documentData]
+                                   : [self.firestore.dataConverter parsedSetData:documentData];
   return [self.firestore.client
-      writeMutations:std::move(parsed).ToMutations(self.key, Precondition::None())
-          completion:completion];
-}
-
-- (void)setData:(NSDictionary<NSString *, id> *)documentData
-    mergeFields:(NSArray<id> *)mergeFields
-     completion:(nullable void (^)(NSError *_Nullable error))completion {
-  ParsedSetData parsed =
-      [self.firestore.dataConverter parsedMergeData:documentData fieldMask:mergeFields];
-  return [self.firestore.client
-      writeMutations:std::move(parsed).ToMutations(self.key, Precondition::None())
+      writeMutations:[parsed mutationsWithKey:self.key precondition:Precondition::None()]
           completion:completion];
 }
 
@@ -161,9 +145,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)updateData:(NSDictionary<id, id> *)fields
         completion:(nullable void (^)(NSError *_Nullable error))completion {
-  ParsedUpdateData parsed = [self.firestore.dataConverter parsedUpdateData:fields];
+  FSTParsedUpdateData *parsed = [self.firestore.dataConverter parsedUpdateData:fields];
   return [self.firestore.client
-      writeMutations:std::move(parsed).ToMutations(self.key, Precondition::Exists(true))
+      writeMutations:[parsed mutationsWithKey:self.key precondition:Precondition::Exists(true)]
           completion:completion];
 }
 
@@ -249,16 +233,16 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (id<FIRListenerRegistration>)
-    addSnapshotListenerWithIncludeMetadataChanges:(BOOL)includeMetadataChanges
-                                         listener:(FIRDocumentSnapshotBlock)listener {
+addSnapshotListenerWithIncludeMetadataChanges:(BOOL)includeMetadataChanges
+                                     listener:(FIRDocumentSnapshotBlock)listener {
   FSTListenOptions *options =
       [self internalOptionsForIncludeMetadataChanges:includeMetadataChanges];
   return [self addSnapshotListenerInternalWithOptions:options listener:listener];
 }
 
 - (id<FIRListenerRegistration>)
-    addSnapshotListenerInternalWithOptions:(FSTListenOptions *)internalOptions
-                                  listener:(FIRDocumentSnapshotBlock)listener {
+addSnapshotListenerInternalWithOptions:(FSTListenOptions *)internalOptions
+                              listener:(FIRDocumentSnapshotBlock)listener {
   FIRFirestore *firestore = self.firestore;
   FSTQuery *query = [FSTQuery queryWithPath:self.key.path()];
   const DocumentKey key = self.key;
@@ -269,24 +253,19 @@ NS_ASSUME_NONNULL_BEGIN
       return;
     }
 
-    HARD_ASSERT(snapshot.documents.count <= 1, "Too many document returned on a document query");
+    FSTAssert(snapshot.documents.count <= 1, @"Too many document returned on a document query");
     FSTDocument *document = [snapshot.documents documentForKey:key];
-
-    BOOL hasPendingWrites = document
-                                ? snapshot.mutatedKeys.contains(key)
-                                : NO;  // We don't raise `hasPendingWrites` for deleted documents.
 
     FIRDocumentSnapshot *result = [FIRDocumentSnapshot snapshotWithFirestore:firestore
                                                                  documentKey:key
                                                                     document:document
-                                                                   fromCache:snapshot.fromCache
-                                                            hasPendingWrites:hasPendingWrites];
+                                                                   fromCache:snapshot.fromCache];
     listener(result, nil);
   };
 
   FSTAsyncQueryListener *asyncListener =
-      [[FSTAsyncQueryListener alloc] initWithExecutor:self.firestore.client.userExecutor
-                                      snapshotHandler:snapshotHandler];
+      [[FSTAsyncQueryListener alloc] initWithDispatchQueue:self.firestore.client.userDispatchQueue
+                                           snapshotHandler:snapshotHandler];
 
   FSTQueryListener *internalListener =
       [firestore.client listenToQuery:query

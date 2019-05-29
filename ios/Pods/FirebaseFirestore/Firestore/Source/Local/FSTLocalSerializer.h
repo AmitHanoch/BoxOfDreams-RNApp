@@ -16,12 +16,11 @@
 
 #import <Foundation/Foundation.h>
 
-#include "Firestore/core/src/firebase/firestore/model/snapshot_version.h"
-
 @class FSTMaybeDocument;
 @class FSTMutationBatch;
 @class FSTQueryData;
 @class FSTSerializerBeta;
+@class FSTSnapshotVersion;
 
 @class FSTPBMaybeDocument;
 @class FSTPBTarget;
@@ -62,11 +61,11 @@ NS_ASSUME_NONNULL_BEGIN
 /** Decodes an FSTPBTarget proto from local storage into an FSTQueryData model. */
 - (FSTQueryData *)decodedQueryData:(FSTPBTarget *)target;
 
-/** Encodes a SnapshotVersion model into a GPBTimestamp proto. */
-- (GPBTimestamp *)encodedVersion:(const firebase::firestore::model::SnapshotVersion &)version;
+/** Encodes an FSTSnapshotVersion model into a GPBTimestamp proto. */
+- (GPBTimestamp *)encodedVersion:(FSTSnapshotVersion *)version;
 
-/** Decodes a GPBTimestamp proto into a SnapshotVersion model. */
-- (firebase::firestore::model::SnapshotVersion)decodedVersion:(GPBTimestamp *)version;
+/** Decodes a GPBTimestamp proto into a FSTSnapshotVersion model. */
+- (FSTSnapshotVersion *)decodedVersion:(GPBTimestamp *)version;
 
 @end
 

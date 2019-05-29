@@ -21,12 +21,12 @@
 
 #import "Firestore/Source/API/FIRGeoPoint+Internal.h"
 #import "Firestore/Source/Model/FSTDocumentKey.h"
+#import "Firestore/Source/Util/FSTAssert.h"
 #import "Firestore/Source/Util/FSTClasses.h"
 
 #include "Firestore/core/src/firebase/firestore/model/database_id.h"
 #include "Firestore/core/src/firebase/firestore/model/field_path.h"
 #include "Firestore/core/src/firebase/firestore/util/comparison.h"
-#include "Firestore/core/src/firebase/firestore/util/hard_assert.h"
 #include "Firestore/core/src/firebase/firestore/util/string_apple.h"
 
 namespace util = firebase::firestore::util;
@@ -99,8 +99,8 @@ NS_ASSUME_NONNULL_BEGIN
   if (self.typeOrder > other.typeOrder) {
     return NSOrderedDescending;
   } else {
-    HARD_ASSERT(self.typeOrder < other.typeOrder,
-                "defaultCompare should not be used for values of same type.");
+    FSTAssert(self.typeOrder < other.typeOrder,
+              @"defaultCompare should not be used for values of same type.");
     return NSOrderedAscending;
   }
 }
@@ -231,8 +231,8 @@ NS_ASSUME_NONNULL_BEGIN
       if ([other isKindOfClass:[FSTDoubleValue class]]) {
         return WrapCompare(thisDouble, ((FSTDoubleValue *)other).internalValue);
       } else {
-        HARD_ASSERT([other isKindOfClass:[FSTIntegerValue class]], "Unknown number value: %s",
-                    other);
+        FSTAssert([other isKindOfClass:[FSTIntegerValue class]], @"Unknown number value: %@",
+                  other);
         auto result = CompareMixedNumber(thisDouble, ((FSTIntegerValue *)other).internalValue);
         return static_cast<NSComparisonResult>(result);
       }
@@ -241,8 +241,7 @@ NS_ASSUME_NONNULL_BEGIN
       if ([other isKindOfClass:[FSTIntegerValue class]]) {
         return WrapCompare(thisInt, ((FSTIntegerValue *)other).internalValue);
       } else {
-        HARD_ASSERT([other isKindOfClass:[FSTDoubleValue class]], "Unknown number value: %s",
-                    other);
+        FSTAssert([other isKindOfClass:[FSTDoubleValue class]], @"Unknown number value: %@", other);
         double otherDouble = ((FSTDoubleValue *)other).internalValue;
         auto result = ReverseOrder(CompareMixedNumber(otherDouble, thisInt));
         return static_cast<NSComparisonResult>(result);
@@ -356,7 +355,7 @@ template <>
 struct Comparator<NSString *> {
   bool operator()(NSString *left, NSString *right) const {
     Comparator<absl::string_view> lessThan;
-    return lessThan(MakeString(left), MakeString(right));
+    return lessThan(MakeStringView(left), MakeStringView(right));
   }
 };
 
@@ -500,7 +499,7 @@ struct Comparator<NSString *> {
     case FSTServerTimestampBehaviorPrevious:
       return self.previousValue ? [self.previousValue valueWithOptions:options] : [NSNull null];
     default:
-      HARD_FAIL("Unexpected server timestamp option: %s", options.serverTimestampBehavior);
+      FSTFail(@"Unexpected server timestamp option: %ld", (long)options.serverTimestampBehavior);
   }
 }
 
@@ -690,12 +689,13 @@ static NSComparisonResult CompareBytes(NSData *left, NSData *right) {
 - (NSComparisonResult)compare:(FSTFieldValue *)other {
   if ([other isKindOfClass:[FSTReferenceValue class]]) {
     FSTReferenceValue *ref = (FSTReferenceValue *)other;
-    NSComparisonResult cmp =
-        WrapCompare(self.databaseID->project_id(), ref.databaseID->project_id());
+    NSComparisonResult cmp = [util::WrapNSStringNoCopy(self.databaseID->project_id())
+        compare:util::WrapNSStringNoCopy(ref.databaseID->project_id())];
     if (cmp != NSOrderedSame) {
       return cmp;
     }
-    cmp = WrapCompare(self.databaseID->database_id(), ref.databaseID->database_id());
+    cmp = [util::WrapNSStringNoCopy(self.databaseID->database_id())
+        compare:util::WrapNSStringNoCopy(ref.databaseID->database_id())];
     return cmp != NSOrderedSame ? cmp : [self.key compare:ref.key];
   } else {
     return [self defaultCompare:other];
@@ -825,7 +825,7 @@ static const NSComparator StringComparator = ^NSComparisonResult(NSString *left,
 
 - (FSTObjectValue *)objectBySettingValue:(FSTFieldValue *)value
                                  forPath:(const FieldPath &)fieldPath {
-  HARD_ASSERT(fieldPath.size() > 0, "Cannot set value with an empty path");
+  FSTAssert(fieldPath.size() > 0, @"Cannot set value with an empty path");
 
   NSString *childName = util::WrapNSString(fieldPath.first_segment());
   if (fieldPath.size() == 1) {
@@ -849,7 +849,7 @@ static const NSComparator StringComparator = ^NSComparisonResult(NSString *left,
 }
 
 - (FSTObjectValue *)objectByDeletingPath:(const FieldPath &)fieldPath {
-  HARD_ASSERT(fieldPath.size() > 0, "Cannot delete an empty path");
+  FSTAssert(fieldPath.size() > 0, @"Cannot delete an empty path");
   NSString *childName = util::WrapNSString(fieldPath.first_segment());
   if (fieldPath.size() == 1) {
     return [[FSTObjectValue alloc]

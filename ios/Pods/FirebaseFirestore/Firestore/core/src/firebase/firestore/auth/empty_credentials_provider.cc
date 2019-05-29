@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
+#define UNUSED(x) (void)(x)
+
 #include "Firestore/core/src/firebase/firestore/auth/empty_credentials_provider.h"
 
 namespace firebase {
 namespace firestore {
 namespace auth {
 
-void EmptyCredentialsProvider::GetToken(TokenListener completion) {
+void EmptyCredentialsProvider::GetToken(bool force_refresh,
+                                        TokenListener completion) {
+  UNUSED(force_refresh);
   if (completion) {
     // Unauthenticated token will force the GRPC fallback to use default
     // settings.
@@ -28,14 +32,11 @@ void EmptyCredentialsProvider::GetToken(TokenListener completion) {
   }
 }
 
-void EmptyCredentialsProvider::SetCredentialChangeListener(
-    CredentialChangeListener changeListener) {
-  if (changeListener) {
-    changeListener(User::Unauthenticated());
+void EmptyCredentialsProvider::SetUserChangeListener(
+    UserChangeListener listener) {
+  if (listener) {
+    listener(User::Unauthenticated());
   }
-}
-
-void EmptyCredentialsProvider::InvalidateToken() {
 }
 
 }  // namespace auth

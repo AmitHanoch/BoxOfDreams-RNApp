@@ -16,7 +16,9 @@
 
 #import <Foundation/Foundation.h>
 
-#include "Firestore/core/src/firebase/firestore/model/document_key_set.h"
+#import "Firestore/Source/Core/FSTTypes.h"
+#import "Firestore/Source/Local/FSTGarbageCollector.h"
+#import "Firestore/Source/Model/FSTDocumentKeySet.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -33,7 +35,10 @@ NS_ASSUME_NONNULL_BEGIN
  * FSTReferenceSet also keeps a secondary set that contains references sorted by IDs. This one is
  * used to efficiently implement removal of all references by some target ID.
  */
-@interface FSTReferenceSet : NSObject
+@interface FSTReferenceSet : NSObject <FSTGarbageSource>
+
+/** Keeps track of keys that have references. */
+@property(nonatomic, weak, readwrite, nullable) id<FSTGarbageCollector> garbageCollector;
 
 /** Returns YES if the reference set contains no references. */
 - (BOOL)isEmpty;
@@ -42,28 +47,22 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addReferenceToKey:(const firebase::firestore::model::DocumentKey &)key forID:(int)ID;
 
 /** Add references to the given document keys for the given ID. */
-- (void)addReferencesToKeys:(const firebase::firestore::model::DocumentKeySet &)keys forID:(int)ID;
+- (void)addReferencesToKeys:(FSTDocumentKeySet *)keys forID:(int)ID;
 
 /** Removes a reference to the given document key for the given ID. */
 - (void)removeReferenceToKey:(const firebase::firestore::model::DocumentKey &)key forID:(int)ID;
 
 /** Removes references to the given document keys for the given ID. */
-- (void)removeReferencesToKeys:(const firebase::firestore::model::DocumentKeySet &)keys
-                         forID:(int)ID;
+- (void)removeReferencesToKeys:(FSTDocumentKeySet *)keys forID:(int)ID;
 
 /** Clears all references with a given ID. Calls -removeReferenceToKey: for each key removed. */
-- (firebase::firestore::model::DocumentKeySet)removeReferencesForID:(int)ID;
+- (void)removeReferencesForID:(int)ID;
 
 /** Clears all references for all IDs. */
 - (void)removeAllReferences;
 
 /** Returns all of the document keys that have had references added for the given ID. */
-- (firebase::firestore::model::DocumentKeySet)referencedKeysForID:(int)ID;
-
-/**
- * Checks to see if there are any references to a document with the given key.
- */
-- (BOOL)containsKey:(const firebase::firestore::model::DocumentKey &)key;
+- (FSTDocumentKeySet *)referencedKeysForID:(int)ID;
 
 @end
 

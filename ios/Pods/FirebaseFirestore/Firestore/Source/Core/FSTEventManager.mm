@@ -19,11 +19,7 @@
 #import "Firestore/Source/Core/FSTQuery.h"
 #import "Firestore/Source/Core/FSTSyncEngine.h"
 #import "Firestore/Source/Model/FSTDocumentSet.h"
-
-#include "Firestore/core/src/firebase/firestore/util/hard_assert.h"
-
-using firebase::firestore::model::OnlineState;
-using firebase::firestore::model::TargetId;
+#import "Firestore/Source/Util/FSTAssert.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -54,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (instancetype)init {
-  HARD_FAIL("FSTListenOptions init not supported");
+  FSTFail(@"FSTListenOptions init not supported");
   return nil;
 }
 
@@ -68,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface FSTQueryListenersInfo : NSObject
 @property(nonatomic, strong, nullable, readwrite) FSTViewSnapshot *viewSnapshot;
-@property(nonatomic, assign, readwrite) TargetId targetID;
+@property(nonatomic, assign, readwrite) FSTTargetID targetID;
 @property(nonatomic, strong, readonly) NSMutableArray<FSTQueryListener *> *listeners;
 @end
 
@@ -98,7 +94,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign, readwrite) BOOL raisedInitialEvent;
 
 /** The last online state this query listener got. */
-@property(nonatomic, assign, readwrite) OnlineState onlineState;
+@property(nonatomic, assign, readwrite) FSTOnlineState onlineState;
 
 /** The FSTViewSnapshotHandler associated with this query listener. */
 @property(nonatomic, copy, nullable) FSTViewSnapshotHandler viewSnapshotHandler;
@@ -120,8 +116,8 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)queryDidChangeViewSnapshot:(FSTViewSnapshot *)snapshot {
-  HARD_ASSERT(snapshot.documentChanges.count > 0 || snapshot.syncStateChanged,
-              "We got a new snapshot with no changes?");
+  FSTAssert(snapshot.documentChanges.count > 0 || snapshot.syncStateChanged,
+            @"We got a new snapshot with no changes?");
 
   if (!self.options.includeDocumentMetadataChanges) {
     // Remove the metadata-only changes.
@@ -136,9 +132,8 @@ NS_ASSUME_NONNULL_BEGIN
                                          oldDocuments:snapshot.oldDocuments
                                       documentChanges:changes
                                             fromCache:snapshot.fromCache
-                                          mutatedKeys:snapshot.mutatedKeys
-                                     syncStateChanged:snapshot.syncStateChanged
-                              excludesMetadataChanges:YES];
+                                     hasPendingWrites:snapshot.hasPendingWrites
+                                     syncStateChanged:snapshot.syncStateChanged];
   }
 
   if (!self.raisedInitialEvent) {
@@ -156,7 +151,7 @@ NS_ASSUME_NONNULL_BEGIN
   self.viewSnapshotHandler(nil, error);
 }
 
-- (void)applyChangedOnlineState:(OnlineState)onlineState {
+- (void)applyChangedOnlineState:(FSTOnlineState)onlineState {
   self.onlineState = onlineState;
   if (self.snapshot && !self.raisedInitialEvent &&
       [self shouldRaiseInitialEventForSnapshot:self.snapshot onlineState:onlineState]) {
@@ -165,9 +160,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)shouldRaiseInitialEventForSnapshot:(FSTViewSnapshot *)snapshot
-                               onlineState:(OnlineState)onlineState {
-  HARD_ASSERT(!self.raisedInitialEvent,
-              "Determining whether to raise initial event, but already had first event.");
+                               onlineState:(FSTOnlineState)onlineState {
+  FSTAssert(!self.raisedInitialEvent,
+            @"Determining whether to raise initial event, but already had first event.");
 
   // Always raise the first event when we're synced
   if (!snapshot.fromCache) {
@@ -176,16 +171,16 @@ NS_ASSUME_NONNULL_BEGIN
 
   // NOTE: We consider OnlineState.Unknown as online (it should become Offline or Online if we
   // wait long enough).
-  BOOL maybeOnline = onlineState != OnlineState::Offline;
+  BOOL maybeOnline = onlineState != FSTOnlineStateOffline;
   // Don't raise the event if we're online, aren't synced yet (checked
   // above) and are waiting for a sync.
   if (self.options.waitForSyncWhenOnline && maybeOnline) {
-    HARD_ASSERT(snapshot.fromCache, "Waiting for sync, but snapshot is not from cache.");
+    FSTAssert(snapshot.fromCache, @"Waiting for sync, but snapshot is not from cache.");
     return NO;
   }
 
   // Raise data from cache if we have any documents or we are offline
-  return !snapshot.documents.isEmpty || onlineState == OnlineState::Offline;
+  return !snapshot.documents.isEmpty || onlineState == FSTOnlineStateOffline;
 }
 
 - (BOOL)shouldRaiseEventForSnapshot:(FSTViewSnapshot *)snapshot {
@@ -208,14 +203,26 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)raiseInitialEventForSnapshot:(FSTViewSnapshot *)snapshot {
-  HARD_ASSERT(!self.raisedInitialEvent, "Trying to raise initial events for second time");
-  snapshot = [FSTViewSnapshot snapshotForInitialDocuments:snapshot.documents
-                                                    query:snapshot.query
-                                              mutatedKeys:snapshot.mutatedKeys
-                                                fromCache:snapshot.fromCache
-                                  excludesMetadataChanges:snapshot.excludesMetadataChanges];
+  FSTAssert(!self.raisedInitialEvent, @"Trying to raise initial events for second time");
+  snapshot = [[FSTViewSnapshot alloc]
+         initWithQuery:snapshot.query
+             documents:snapshot.documents
+          oldDocuments:[FSTDocumentSet documentSetWithComparator:snapshot.query.comparator]
+       documentChanges:[FSTQueryListener getInitialViewChangesFor:snapshot]
+             fromCache:snapshot.fromCache
+      hasPendingWrites:snapshot.hasPendingWrites
+      syncStateChanged:YES];
   self.raisedInitialEvent = YES;
   self.viewSnapshotHandler(snapshot, nil);
+}
+
++ (NSArray<FSTDocumentViewChange *> *)getInitialViewChangesFor:(FSTViewSnapshot *)snapshot {
+  NSMutableArray<FSTDocumentViewChange *> *result = [NSMutableArray array];
+  for (FSTDocument *doc in snapshot.documents.documentEnumerator) {
+    [result addObject:[FSTDocumentViewChange changeWithDocument:doc
+                                                           type:FSTDocumentViewChangeTypeAdded]];
+  }
+  return result;
 }
 
 @end
@@ -229,7 +236,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, readonly) FSTSyncEngine *syncEngine;
 @property(nonatomic, strong, readonly)
     NSMutableDictionary<FSTQuery *, FSTQueryListenersInfo *> *queries;
-@property(nonatomic, assign) OnlineState onlineState;
+@property(nonatomic, assign) FSTOnlineState onlineState;
 
 @end
 
@@ -244,12 +251,12 @@ NS_ASSUME_NONNULL_BEGIN
     _syncEngine = syncEngine;
     _queries = [NSMutableDictionary dictionary];
 
-    _syncEngine.syncEngineDelegate = self;
+    _syncEngine.delegate = self;
   }
   return self;
 }
 
-- (TargetId)addListener:(FSTQueryListener *)listener {
+- (FSTTargetID)addListener:(FSTQueryListener *)listener {
   FSTQuery *query = listener.query;
   BOOL firstListen = NO;
 
@@ -314,7 +321,7 @@ NS_ASSUME_NONNULL_BEGIN
   [self.queries removeObjectForKey:query];
 }
 
-- (void)applyChangedOnlineState:(OnlineState)onlineState {
+- (void)applyChangedOnlineState:(FSTOnlineState)onlineState {
   self.onlineState = onlineState;
   for (FSTQueryListenersInfo *info in self.queries.objectEnumerator) {
     for (FSTQueryListener *listener in info.listeners) {

@@ -16,29 +16,26 @@
 
 #import "Firestore/Source/Core/FSTTransaction.h"
 
+#import <GRPCClient/GRPCCall.h>
+
 #include <map>
-#include <utility>
 #include <vector>
 
 #import "FIRFirestoreErrors.h"
 #import "Firestore/Source/API/FSTUserDataConverter.h"
+#import "Firestore/Source/Core/FSTSnapshotVersion.h"
 #import "Firestore/Source/Model/FSTDocument.h"
+#import "Firestore/Source/Model/FSTDocumentKeySet.h"
 #import "Firestore/Source/Model/FSTMutation.h"
 #import "Firestore/Source/Remote/FSTDatastore.h"
+#import "Firestore/Source/Util/FSTAssert.h"
 #import "Firestore/Source/Util/FSTUsageValidation.h"
 
 #include "Firestore/core/src/firebase/firestore/model/document_key.h"
-#include "Firestore/core/src/firebase/firestore/model/document_key_set.h"
 #include "Firestore/core/src/firebase/firestore/model/precondition.h"
-#include "Firestore/core/src/firebase/firestore/model/snapshot_version.h"
-#include "Firestore/core/src/firebase/firestore/util/hard_assert.h"
 
-using firebase::firestore::core::ParsedSetData;
-using firebase::firestore::core::ParsedUpdateData;
 using firebase::firestore::model::DocumentKey;
 using firebase::firestore::model::Precondition;
-using firebase::firestore::model::SnapshotVersion;
-using firebase::firestore::model::DocumentKeySet;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -56,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @implementation FSTTransaction {
-  std::map<DocumentKey, SnapshotVersion> _readVersions;
+  std::map<DocumentKey, FSTSnapshotVersion *> _readVersions;
 }
 
 + (instancetype)transactionWithDatastore:(FSTDatastore *)datastore {
@@ -80,30 +77,26 @@ NS_ASSUME_NONNULL_BEGIN
  * writes sent to the backend.
  */
 - (BOOL)recordVersionForDocument:(FSTMaybeDocument *)doc error:(NSError **)error {
-  HARD_ASSERT(error != nil, "nil error parameter");
+  FSTAssert(error != nil, @"nil error parameter");
   *error = nil;
-  SnapshotVersion docVersion;
-  if ([doc isKindOfClass:[FSTDocument class]]) {
-    docVersion = doc.version;
-  } else if ([doc isKindOfClass:[FSTDeletedDocument class]]) {
+  FSTSnapshotVersion *docVersion = doc.version;
+  if ([doc isKindOfClass:[FSTDeletedDocument class]]) {
     // For deleted docs, we must record an explicit no version to build the right precondition
     // when writing.
-    docVersion = SnapshotVersion::None();
-  } else {
-    HARD_FAIL("Unexpected document type in transaction: %s", NSStringFromClass([doc class]));
+    docVersion = [FSTSnapshotVersion noVersion];
   }
-
   if (_readVersions.find(doc.key) == _readVersions.end()) {
     _readVersions[doc.key] = docVersion;
     return YES;
   } else {
     if (error) {
-      *error = [NSError errorWithDomain:FIRFirestoreErrorDomain
-                                   code:FIRFirestoreErrorCodeFailedPrecondition
-                               userInfo:@{
-                                 NSLocalizedDescriptionKey :
-                                     @"A document cannot be read twice within a single transaction."
-                               }];
+      *error =
+          [NSError errorWithDomain:FIRFirestoreErrorDomain
+                              code:FIRFirestoreErrorCodeFailedPrecondition
+                          userInfo:@{
+                            NSLocalizedDescriptionKey :
+                                @"A document cannot be read twice within a single transaction."
+                          }];
     }
     return NO;
   }
@@ -166,8 +159,8 @@ NS_ASSUME_NONNULL_BEGIN
     return Precondition::Exists(true);
   }
 
-  const SnapshotVersion &version = iter->second;
-  if (version == SnapshotVersion::None()) {
+  FSTSnapshotVersion *version = iter->second;
+  if ([version isEqual:[FSTSnapshotVersion noVersion]]) {
     // The document was read, but doesn't exist.
     // Return an error because the precondition is impossible
     if (error) {
@@ -185,18 +178,19 @@ NS_ASSUME_NONNULL_BEGIN
   }
 }
 
-- (void)setData:(ParsedSetData &&)data forDocument:(const DocumentKey &)key {
-  [self writeMutations:std::move(data).ToMutations(key, [self preconditionForDocumentKey:key])];
+- (void)setData:(FSTParsedSetData *)data forDocument:(const DocumentKey &)key {
+  [self writeMutations:[data mutationsWithKey:key
+                                 precondition:[self preconditionForDocumentKey:key]]];
 }
 
-- (void)updateData:(ParsedUpdateData &&)data forDocument:(const DocumentKey &)key {
+- (void)updateData:(FSTParsedUpdateData *)data forDocument:(const DocumentKey &)key {
   NSError *error = nil;
   const Precondition precondition = [self preconditionForUpdateWithDocumentKey:key error:&error];
   if (precondition.IsNone()) {
-    HARD_ASSERT(error, "Got nil precondition, but error was not set");
+    FSTAssert(error, @"Got nil precondition, but error was not set");
     self.lastWriteError = error;
   } else {
-    [self writeMutations:std::move(data).ToMutations(key, precondition)];
+    [self writeMutations:[data mutationsWithKey:key precondition:precondition]];
   }
 }
 
@@ -206,7 +200,7 @@ NS_ASSUME_NONNULL_BEGIN
                            precondition:[self preconditionForDocumentKey:key]] ]];
   // Since the delete will be applied before all following writes, we need to ensure that the
   // precondition for the next write will be exists without timestamp.
-  _readVersions[key] = SnapshotVersion::None();
+  _readVersions[key] = [FSTSnapshotVersion noVersion];
 }
 
 - (void)commitWithCompletion:(FSTVoidErrorBlock)completion {
@@ -221,15 +215,15 @@ NS_ASSUME_NONNULL_BEGIN
   }
 
   // Make a list of read documents that haven't been written.
-  DocumentKeySet unwritten;
+  FSTDocumentKeySet *unwritten = [FSTDocumentKeySet keySet];
   for (const auto &kv : _readVersions) {
-    unwritten = unwritten.insert(kv.first);
+    unwritten = [unwritten setByAddingObject:kv.first];
   };
   // For each mutation, note that the doc was written.
   for (FSTMutation *mutation in self.mutations) {
-    unwritten = unwritten.erase(mutation.key);
+    unwritten = [unwritten setByRemovingObject:mutation.key];
   }
-  if (!unwritten.empty()) {
+  if (unwritten.count) {
     // TODO(klimt): This is a temporary restriction, until "verify" is supported on the backend.
     completion([NSError
         errorWithDomain:FIRFirestoreErrorDomain

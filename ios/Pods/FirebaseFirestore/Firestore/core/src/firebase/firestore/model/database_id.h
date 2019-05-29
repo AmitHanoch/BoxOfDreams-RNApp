@@ -20,7 +20,6 @@
 #include <cstdint>
 #include <string>
 
-#include "Firestore/core/src/firebase/firestore/util/hashing.h"
 #include "absl/strings/string_view.h"
 
 namespace firebase {
@@ -45,7 +44,7 @@ class DatabaseId {
    * @param project_id The project for the database.
    * @param database_id The database in the project to use.
    */
-  DatabaseId(std::string project_id, std::string database_id);
+  DatabaseId(absl::string_view project_id, absl::string_view database_id);
 
   const std::string& project_id() const {
     return project_id_;
@@ -63,8 +62,9 @@ class DatabaseId {
 #if defined(__OBJC__)
   // For objective-c++ hash; to be removed after migration.
   // Do NOT use in C++ code.
-  size_t Hash() const {
-    return util::Hash(project_id_, database_id_);
+  NSUInteger Hash() const {
+    std::hash<std::string> hash_fn;
+    return hash_fn(project_id_) * 31u + hash_fn(database_id_);
   }
 #endif  // defined(__OBJC__)
 

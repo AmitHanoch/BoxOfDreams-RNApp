@@ -25,7 +25,6 @@
 #import "Firestore/Source/Util/FSTUsageValidation.h"
 
 #include "Firestore/core/src/firebase/firestore/model/field_path.h"
-#include "Firestore/core/src/firebase/firestore/util/hashing.h"
 #include "Firestore/core/src/firebase/firestore/util/string_apple.h"
 
 namespace util = firebase::firestore::util;
@@ -47,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
     FSTThrowInvalidArgument(@"Invalid field path. Provided names must not be empty.");
   }
 
-  std::vector<std::string> field_names;
+  std::vector<std::string> field_names{};
   field_names.reserve(fieldNames.count);
   for (int i = 0; i < fieldNames.count; ++i) {
     if (fieldNames[i].length == 0) {
@@ -115,7 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSUInteger)hash {
-  return util::Hash(_internalValue);
+  return _internalValue.Hash();
 }
 
 - (const firebase::firestore::model::FieldPath &)internalValue {

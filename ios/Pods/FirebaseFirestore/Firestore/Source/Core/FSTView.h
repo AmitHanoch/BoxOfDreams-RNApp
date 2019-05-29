@@ -16,11 +16,11 @@
 
 #import <Foundation/Foundation.h>
 
+#import "Firestore/Source/Core/FSTTypes.h"
 #import "Firestore/Source/Model/FSTDocumentDictionary.h"
+#import "Firestore/Source/Model/FSTDocumentKeySet.h"
 
 #include "Firestore/core/src/firebase/firestore/model/document_key.h"
-#include "Firestore/core/src/firebase/firestore/model/document_key_set.h"
-#include "Firestore/core/src/firebase/firestore/model/types.h"
 
 @class FSTDocumentSet;
 @class FSTDocumentViewChangeSet;
@@ -38,8 +38,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init NS_UNAVAILABLE;
 
-- (const firebase::firestore::model::DocumentKeySet &)mutatedKeys;
-
 /** The new set of docs that should be in the view. */
 @property(nonatomic, strong, readonly) FSTDocumentSet *documentSet;
 
@@ -51,6 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
  * and there needs to be another pass based on the local cache.
  */
 @property(nonatomic, assign, readonly) BOOL needsRefill;
+
+@property(nonatomic, strong, readonly) FSTDocumentKeySet *mutatedKeys;
 
 @end
 
@@ -97,8 +97,7 @@ typedef NS_ENUM(NSInteger, FSTLimboDocumentChangeType) {
 - (instancetype)init NS_UNAVAILABLE;
 
 - (instancetype)initWithQuery:(FSTQuery *)query
-              remoteDocuments:(firebase::firestore::model::DocumentKeySet)remoteDocuments
-    NS_DESIGNATED_INITIALIZER;
+              remoteDocuments:(FSTDocumentKeySet *)remoteDocuments NS_DESIGNATED_INITIALIZER;
 
 /**
  * Iterates over a set of doc changes, applies the query limit, and computes what the new results
@@ -144,16 +143,16 @@ typedef NS_ENUM(NSInteger, FSTLimboDocumentChangeType) {
                               targetChange:(nullable FSTTargetChange *)targetChange;
 
 /**
- * Applies an OnlineState change to the view, potentially generating an FSTViewChange if the
+ * Applies an FSTOnlineState change to the view, potentially generating an FSTViewChange if the
  * view's syncState changes as a result.
  */
-- (FSTViewChange *)applyChangedOnlineState:(firebase::firestore::model::OnlineState)onlineState;
+- (FSTViewChange *)applyChangedOnlineState:(FSTOnlineState)onlineState;
 
 /**
  * The set of remote documents that the server has told us belongs to the target associated with
  * this view.
  */
-- (const firebase::firestore::model::DocumentKeySet &)syncedDocuments;
+@property(nonatomic, strong, readonly) FSTDocumentKeySet *syncedDocuments;
 
 @end
 

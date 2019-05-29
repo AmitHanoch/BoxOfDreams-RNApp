@@ -17,98 +17,125 @@
 #import <Foundation/Foundation.h>
 
 #include <map>
-#include <set>
-#include <unordered_map>
-#include <unordered_set>
 
+#import "Firestore/Source/Core/FSTTypes.h"
 #import "Firestore/Source/Model/FSTDocumentDictionary.h"
+#import "Firestore/Source/Model/FSTDocumentKeySet.h"
 
 #include "Firestore/core/src/firebase/firestore/model/document_key.h"
-#include "Firestore/core/src/firebase/firestore/model/document_key_set.h"
-#include "Firestore/core/src/firebase/firestore/model/snapshot_version.h"
-#include "Firestore/core/src/firebase/firestore/model/types.h"
 
 @class FSTDocument;
 @class FSTExistenceFilter;
 @class FSTMaybeDocument;
+@class FSTSnapshotVersion;
 @class FSTWatchChange;
 @class FSTQueryData;
-@class FSTDocumentWatchChange;
-@class FSTWatchTargetChange;
-@class FSTExistenceFilterWatchChange;
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Interface implemented by RemoteStore to expose target metadata to the FSTWatchChangeAggregator.
- */
-@protocol FSTTargetMetadataProvider
+#pragma mark - FSTTargetMapping
 
 /**
- * Returns the set of remote document keys for the given target ID as of the last raised snapshot.
+ * TargetMapping represents a change to the documents in a query from the server. This can either
+ * be an incremental Update or a full Reset.
+ *
+ * <p>This is an empty abstract class so that all the different kinds of changes can have a common
+ * base class.
  */
-- (firebase::firestore::model::DocumentKeySet)remoteKeysForTarget:(FSTBoxedTargetID *)targetID;
+@interface FSTTargetMapping : NSObject
+@end
+
+#pragma mark - FSTResetMapping
+
+/** The new set of documents to replace the current documents for a target. */
+@interface FSTResetMapping : FSTTargetMapping
 
 /**
- * Returns the FSTQueryData for an active target ID or 'null' if this query has become inactive
+ * Creates a new mapping with the keys for the given documents added. This is intended primarily
+ * for testing.
  */
-- (nullable FSTQueryData *)queryDataForTarget:(FSTBoxedTargetID *)targetID;
++ (FSTResetMapping *)mappingWithDocuments:(NSArray<FSTDocument *> *)documents;
 
+/** The new set of documents for the target. */
+@property(nonatomic, strong, readonly) FSTDocumentKeySet *documents;
+@end
+
+#pragma mark - FSTUpdateMapping
+
+/**
+ * A target should update its set of documents with the given added/removed set of documents.
+ */
+@interface FSTUpdateMapping : FSTTargetMapping
+
+/**
+ * Creates a new mapping with the keys for the given documents added. This is intended primarily
+ * for testing.
+ */
++ (FSTUpdateMapping *)mappingWithAddedDocuments:(NSArray<FSTDocument *> *)added
+                               removedDocuments:(NSArray<FSTDocument *> *)removed;
+
+- (FSTDocumentKeySet *)applyTo:(FSTDocumentKeySet *)keys;
+
+/** The documents added to the target. */
+@property(nonatomic, strong, readonly) FSTDocumentKeySet *addedDocuments;
+/** The documents removed from the target. */
+@property(nonatomic, strong, readonly) FSTDocumentKeySet *removedDocuments;
 @end
 
 #pragma mark - FSTTargetChange
 
 /**
- * An FSTTargetChange specifies the set of changes for a specific target as part of an
- * FSTRemoteEvent. These changes track which documents are added, modified or emoved, as well as the
- * target's resume token and whether the target is marked CURRENT.
- *
- * The actual changes *to* documents are not part of the FSTTargetChange since documents may be part
- * of multiple targets.
+ * Represents an update to the current status of a target, either explicitly having no new state, or
+ * the new value to set. Note "current" has special meaning in the RPC protocol that implies that a
+ * target is both up-to-date and consistent with the rest of the watch stream.
+ */
+typedef NS_ENUM(NSUInteger, FSTCurrentStatusUpdate) {
+  /** The current status is not affected and should not be modified */
+  FSTCurrentStatusUpdateNone,
+  /** The target must be marked as no longer "current" */
+  FSTCurrentStatusUpdateMarkNotCurrent,
+  /** The target must be marked as "current" */
+  FSTCurrentStatusUpdateMarkCurrent,
+};
+
+/**
+ * A part of an FSTRemoteEvent specifying set of changes to a specific target. These changes track
+ * what documents are currently included in the target as well as the current snapshot version and
+ * resume token but the actual changes *to* documents are not part of the FSTTargetChange since
+ * documents may be part of multiple targets.
  */
 @interface FSTTargetChange : NSObject
 
 /**
- * Creates a new target change with the given SnapshotVersion.
+ * Creates a new target change with the given documents. Instances of FSTDocument are considered
+ * added. Instance of FSTDeletedDocument are considered removed. This is intended primarily for
+ * testing.
  */
-- (instancetype)initWithResumeToken:(NSData *)resumeToken
-                            current:(BOOL)current
-                     addedDocuments:(firebase::firestore::model::DocumentKeySet)addedDocuments
-                  modifiedDocuments:(firebase::firestore::model::DocumentKeySet)modifiedDocuments
-                   removedDocuments:(firebase::firestore::model::DocumentKeySet)removedDocuments
-    NS_DESIGNATED_INITIALIZER;
-
-- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)changeWithDocuments:(NSArray<FSTMaybeDocument *> *)docs
+                currentStatusUpdate:(FSTCurrentStatusUpdate)currentStatusUpdate;
 
 /**
- * An opaque, server-assigned token that allows watching a query to be resumed after
- * disconnecting without retransmitting all the data that matches the query. The resume token
- * essentially identifies a point in time from which the server should resume sending results.
+ * The new "current" (synced) status of this target. Set to CurrentStatusUpdateNone if the status
+ * should not be updated. Note "current" has special meaning for in the RPC protocol that implies
+ * that a target is both up-to-date and consistent with the rest of the watch stream.
+ */
+@property(nonatomic, assign, readonly) FSTCurrentStatusUpdate currentStatusUpdate;
+
+/** A set of changes to documents in this target. */
+@property(nonatomic, strong, readonly) FSTTargetMapping *mapping;
+
+/**
+ * The snapshot version representing the last state at which this target received a consistent
+ * snapshot from the backend.
+ */
+@property(nonatomic, strong, readonly) FSTSnapshotVersion *snapshotVersion;
+
+/**
+ * An opaque, server-assigned token that allows watching a query to be resumed after disconnecting
+ * without retransmitting all the data that matches the query. The resume token essentially
+ * identifies a point in time from which the server should resume sending results.
  */
 @property(nonatomic, strong, readonly) NSData *resumeToken;
-
-/**
- * The "current" (synced) status of this target. Note that "current" has special meaning in the RPC
- * protocol that implies that a target is both up-to-date and consistent with the rest of the watch
- * stream.
- */
-@property(nonatomic, assign, readonly) BOOL current;
-
-/**
- * The set of documents that were newly assigned to this target as part of this remote event.
- */
-- (const firebase::firestore::model::DocumentKeySet &)addedDocuments;
-
-/**
- * The set of documents that were already assigned to this target but received an update during this
- * remote event.
- */
-- (const firebase::firestore::model::DocumentKeySet &)modifiedDocuments;
-
-/**
- * The set of documents that were removed from this target as part of this remote event.
- */
-- (const firebase::firestore::model::DocumentKeySet &)removedDocuments;
 
 @end
 
@@ -120,44 +147,41 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface FSTRemoteEvent : NSObject
 
-- (instancetype)
-    initWithSnapshotVersion:(firebase::firestore::model::SnapshotVersion)snapshotVersion
-              targetChanges:
-                  (std::unordered_map<firebase::firestore::model::TargetId, FSTTargetChange *>)
-                      targetChanges
-           targetMismatches:
-               (std::unordered_set<firebase::firestore::model::TargetId>)targetMismatches
-            documentUpdates:
-                (std::unordered_map<firebase::firestore::model::DocumentKey,
-                                    FSTMaybeDocument *,
-                                    firebase::firestore::model::DocumentKeyHash>)documentUpdates
-             limboDocuments:(firebase::firestore::model::DocumentKeySet)limboDocuments;
++ (instancetype)
+eventWithSnapshotVersion:(FSTSnapshotVersion *)snapshotVersion
+           targetChanges:(NSMutableDictionary<NSNumber *, FSTTargetChange *> *)targetChanges
+         documentUpdates:
+             (std::map<firebase::firestore::model::DocumentKey, FSTMaybeDocument *>)documentUpdates;
 
 /** The snapshot version this event brings us up to. */
-- (const firebase::firestore::model::SnapshotVersion &)snapshotVersion;
-
-/**
- * A set of which document updates are due only to limbo resolution targets.
- */
-- (const firebase::firestore::model::DocumentKeySet &)limboDocumentChanges;
+@property(nonatomic, strong, readonly) FSTSnapshotVersion *snapshotVersion;
 
 /** A map from target to changes to the target. See TargetChange. */
-- (const std::unordered_map<firebase::firestore::model::TargetId, FSTTargetChange *> &)
-    targetChanges;
+@property(nonatomic, strong, readonly)
+    NSDictionary<FSTBoxedTargetID *, FSTTargetChange *> *targetChanges;
 
 /**
- * A set of targets that is known to be inconsistent. Listens for these targets should be
- * re-established without resume tokens.
+ * A set of which documents have changed or been deleted, along with the doc's new values
+ * (if not deleted).
  */
-- (const std::unordered_set<firebase::firestore::model::TargetId> &)targetMismatches;
+- (const std::map<firebase::firestore::model::DocumentKey, FSTMaybeDocument *> &)documentUpdates;
+
+/** Adds a document update to this remote event */
+- (void)addDocumentUpdate:(FSTMaybeDocument *)document;
+
+/** Handles an existence filter mismatch */
+- (void)handleExistenceFilterMismatchForTargetID:(FSTBoxedTargetID *)targetID;
+
+- (void)synthesizeDeleteForLimboTargetChange:(FSTTargetChange *)targetChange
+                                         key:(const firebase::firestore::model::DocumentKey &)key;
 
 /**
- * A set of which documents have changed or been deleted, along with the doc's new values (if not
- * deleted).
+ * Strips out mapping changes that aren't actually changes. That is, if the document already
+ * existed in the target, and is being added in the target, and this is not a reset, we can
+ * skip doing the work to associate the document with the target because it has already been done.
  */
-- (const std::unordered_map<firebase::firestore::model::DocumentKey,
-                            FSTMaybeDocument *,
-                            firebase::firestore::model::DocumentKeyHash> &)documentUpdates;
+- (void)filterUpdatesFromTargetChange:(FSTTargetChange *)targetChange
+                    existingDocuments:(FSTDocumentKeySet *)existingDocuments;
 
 @end
 
@@ -169,38 +193,33 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface FSTWatchChangeAggregator : NSObject
 
-- (instancetype)initWithTargetMetadataProvider:(id<FSTTargetMetadataProvider>)targetMetadataProvider
+- (instancetype)
+initWithSnapshotVersion:(FSTSnapshotVersion *)snapshotVersion
+          listenTargets:(NSDictionary<FSTBoxedTargetID *, FSTQueryData *> *)listenTargets
+ pendingTargetResponses:(NSDictionary<FSTBoxedTargetID *, NSNumber *> *)pendingTargetResponses
     NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)init NS_UNAVAILABLE;
 
-/** Processes and adds the FSTDocumentWatchChange to the current set of changes. */
-- (void)handleDocumentChange:(FSTDocumentWatchChange *)documentChange;
+/** The number of pending responses that are being waited on from watch */
+@property(nonatomic, strong, readonly)
+    NSMutableDictionary<FSTBoxedTargetID *, NSNumber *> *pendingTargetResponses;
 
-/** Processes and adds the WatchTargetChange to the current set of changes. */
-- (void)handleTargetChange:(FSTWatchTargetChange *)targetChange;
+/** Aggregates a watch change into the current state */
+- (void)addWatchChange:(FSTWatchChange *)watchChange;
 
-/** Removes the in-memory state for the provided target. */
-- (void)removeTarget:(firebase::firestore::model::TargetId)targetID;
-
-/**
- * Handles existence filters and synthesizes deletes for filter mismatches. Targets that are
- * invalidated by filter mismatches are added to `targetMismatches`.
- */
-- (void)handleExistenceFilter:(FSTExistenceFilterWatchChange *)existenceFilter;
-
-/**
- * Increment the number of acks needed from watch before we can consider the server to be 'in-sync'
- * with the client's active targets.
- */
-- (void)recordTargetRequest:(FSTBoxedTargetID *)targetID;
+/** Aggregates all provided watch changes to the current state in order */
+- (void)addWatchChanges:(NSArray<FSTWatchChange *> *)watchChanges;
 
 /**
  * Converts the current state into a remote event with the snapshot version taken from the
  * initializer.
  */
-- (FSTRemoteEvent *)remoteEventAtSnapshotVersion:
-    (const firebase::firestore::model::SnapshotVersion &)snapshotVersion;
+- (FSTRemoteEvent *)remoteEvent;
+
+/** The existence filters - if any - for the given target IDs. */
+@property(nonatomic, strong, readonly)
+    NSDictionary<FSTBoxedTargetID *, FSTExistenceFilter *> *existenceFilters;
 
 @end
 

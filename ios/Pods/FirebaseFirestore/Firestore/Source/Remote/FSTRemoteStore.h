@@ -16,19 +16,20 @@
 
 #import <Foundation/Foundation.h>
 
-#import "Firestore/Source/Remote/FSTRemoteEvent.h"
+#import "Firestore/Source/Core/FSTTypes.h"
+#import "Firestore/Source/Model/FSTDocumentVersionDictionary.h"
 
 #include "Firestore/core/src/firebase/firestore/auth/user.h"
-#include "Firestore/core/src/firebase/firestore/model/types.h"
-#include "Firestore/core/src/firebase/firestore/util/async_queue.h"
 
 @class FSTDatastore;
 @class FSTLocalStore;
 @class FSTMutationBatch;
 @class FSTMutationBatchResult;
+@class FSTQuery;
 @class FSTQueryData;
 @class FSTRemoteEvent;
 @class FSTTransaction;
+@class FSTDispatchQueue;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -71,14 +72,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Rejects the batch, removing the batch from the mutation queue, recomputing the local view of
  * any documents affected by the batch and then, emitting snapshots with the reverted value.
  */
-- (void)rejectFailedWriteWithBatchID:(firebase::firestore::model::BatchId)batchID
-                               error:(NSError *)error;
-
-/**
- * Returns the set of remote document keys for the given target ID. This list includes the
- * documents that were assigned to the target when we received the last snapshot.
- */
-- (firebase::firestore::model::DocumentKeySet)remoteKeysForTarget:(FSTBoxedTargetID *)targetId;
+- (void)rejectFailedWriteWithBatchID:(FSTBatchID)batchID error:(NSError *)error;
 
 @end
 
@@ -90,7 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol FSTOnlineStateDelegate <NSObject>
 
 /** Called whenever the online state of the watch stream changes */
-- (void)applyChangedOnlineState:(firebase::firestore::model::OnlineState)onlineState;
+- (void)applyChangedOnlineState:(FSTOnlineState)onlineState;
 
 @end
 
@@ -100,11 +94,11 @@ NS_ASSUME_NONNULL_BEGIN
  * FSTRemoteStore handles all interaction with the backend through a simple, clean interface. This
  * class is not thread safe and should be only called from the worker dispatch queue.
  */
-@interface FSTRemoteStore : NSObject <FSTTargetMetadataProvider>
+@interface FSTRemoteStore : NSObject
 
 - (instancetype)initWithLocalStore:(FSTLocalStore *)localStore
                          datastore:(FSTDatastore *)datastore
-                       workerQueue:(firebase::firestore::util::AsyncQueue *)queue;
+               workerDispatchQueue:(FSTDispatchQueue *)queue;
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -130,13 +124,13 @@ NS_ASSUME_NONNULL_BEGIN
  * In response the remote store tears down streams and clears up any tracked operations that should
  * not persist across users. Restarts the streams if appropriate.
  */
-- (void)credentialDidChange;
+- (void)userDidChange:(const firebase::firestore::auth::User &)user;
 
 /** Listens to the target identified by the given FSTQueryData. */
 - (void)listenToTargetWithQueryData:(FSTQueryData *)queryData;
 
 /** Stops listening to the target with the given target ID. */
-- (void)stopListeningToTargetID:(firebase::firestore::model::TargetId)targetID;
+- (void)stopListeningToTargetID:(FSTTargetID)targetID;
 
 /**
  * Tells the FSTRemoteStore that there are new mutations to process in the queue. This is typically

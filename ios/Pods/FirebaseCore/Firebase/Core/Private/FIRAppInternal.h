@@ -17,9 +17,6 @@
 #import "FIRApp.h"
 #import "FIRErrors.h"
 
-@class FIRComponentContainer;
-@protocol FIRCoreConfigurable;
-
 /**
  * The internal interface to FIRApp. This is meant for first-party integrators, who need to receive
  * FIRApp notifications, log info about the success or failure of their configuration, and access
@@ -63,22 +60,6 @@ extern NSString *const kFIRAppIsDefaultAppKey;
 extern NSString *const kFIRAppNameKey;
 extern NSString *const kFIRGoogleAppIDKey;
 
-/**
- * The format string for the User Defaults key used for storing the data collection enabled flag.
- * This includes formatting to append the Firebase App's name.
- */
-extern NSString *const kFIRGlobalAppDataCollectionEnabledDefaultsKeyFormat;
-
-/**
- * The plist key used for storing the data collection enabled flag.
- */
-extern NSString *const kFIRGlobalAppDataCollectionEnabledPlistKey;
-
-/**
- * A notification fired containing diagnostic information when SDK errors occur.
- */
-extern NSString *const kFIRAppDiagnosticsNotification;
-
 /** @var FIRAuthStateDidChangeInternalNotification
  @brief The name of the @c NSNotificationCenter notification which is posted when the auth state
  changes (e.g. a new token has been produced, a user logs in or out). The object parameter of
@@ -109,17 +90,36 @@ extern NSString *const FIRAuthStateDidChangeInternalNotificationAppKey;
  */
 extern NSString *const FIRAuthStateDidChangeInternalNotificationUIDKey;
 
+/** @typedef FIRTokenCallback
+    @brief The type of block which gets called when a token is ready.
+ */
+typedef void (^FIRTokenCallback)(NSString *_Nullable token, NSError *_Nullable error);
+
+/** @typedef FIRAppGetTokenImplementation
+    @brief The type of block which can provide an implementation for the @c getTokenWithCallback:
+        method.
+    @param forceRefresh Forces the token to be refreshed.
+    @param callback The block which should be invoked when the async call completes.
+ */
+typedef void (^FIRAppGetTokenImplementation)(BOOL forceRefresh, FIRTokenCallback callback);
+
+/** @typedef FIRAppGetUID
+    @brief The type of block which can provide an implementation for the @c getUID method.
+ */
+typedef NSString *_Nullable (^FIRAppGetUIDImplementation)(void);
+
 @interface FIRApp ()
 
-/**
- * A flag indicating if this is the default app (has the default app name).
+/** @property getTokenImplementation
+    @brief Gets or sets the block to use for the implementation of
+        @c getTokenForcingRefresh:withCallback:
  */
-@property(nonatomic, readonly) BOOL isDefaultApp;
+@property(nonatomic, copy) FIRAppGetTokenImplementation getTokenImplementation;
 
-/*
- * The container of interop SDKs for this app.
+/** @property getUIDImplementation
+    @brief Gets or sets the block to use for the implementation of @c getUID.
  */
-@property(nonatomic) FIRComponentContainer *container;
+@property(nonatomic, copy) FIRAppGetUIDImplementation getUIDImplementation;
 
 /**
  * Creates an error for failing to configure a subspec service. This method is called by each
@@ -133,13 +133,6 @@ extern NSString *const FIRAuthStateDidChangeInternalNotificationUIDKey;
  * Checks if the default app is configured without trying to configure it.
  */
 + (BOOL)isDefaultAppConfigured;
-
-/**
- * Register a class that conforms to `FIRCoreConfigurable`. Each SDK should have one class that
- * registers in order to provide critical information for interoperability and lifecycle events.
- * TODO(wilsonryan): Write more documentation.
- */
-+ (void)registerAsConfigurable:(Class<FIRCoreConfigurable>)klass;
 
 /**
  * Registers a given third-party library with the given version number to be reported for
@@ -174,6 +167,19 @@ extern NSString *const FIRAuthStateDidChangeInternalNotificationUIDKey;
  * Can be used by the unit tests in each SDK to set customized options.
  */
 - (instancetype)initInstanceWithName:(NSString *)name options:(FIROptions *)options;
+
+/** @fn getTokenForcingRefresh:withCallback:
+    @brief Retrieves the Firebase authentication token, possibly refreshing it.
+    @param forceRefresh Forces a token refresh. Useful if the token becomes invalid for some reason
+        other than an expiration.
+    @param callback The block to invoke when the token is available.
+ */
+- (void)getTokenForcingRefresh:(BOOL)forceRefresh withCallback:(FIRTokenCallback)callback;
+
+/**
+ * Expose the UID of the current user for Firestore.
+ */
+- (nullable NSString *)getUID;
 
 @end
 

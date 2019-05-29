@@ -1,6 +1,7 @@
 #import "Firestore/third_party/Immutable/FSTArraySortedDictionary.h"
 
 #import "Firestore/third_party/Immutable/FSTArraySortedDictionaryEnumerator.h"
+#import "Firestore/Source/Util/FSTAssert.h"
 #import "Firestore/third_party/Immutable/FSTTreeSortedDictionary.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -37,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
   for (id key in keys) {
     values[pos++] = dictionary[key];
   }
-  NSAssert(values.count == keys.count, @"We added as many keys as values");
+  FSTAssert(values.count == keys.count, @"We added as many keys as values");
   return [[FSTArraySortedDictionary alloc] initWithComparator:comparator keys:keys values:values];
 }
 
@@ -49,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (id)initWithComparator:(NSComparator)comparator keys:(NSArray *)keys values:(NSArray *)values {
   self = [super init];
   if (self != nil) {
-    NSAssert(keys.count == values.count, @"keys and values must have the same count");
+    FSTAssert(keys.count == values.count, @"keys and values must have the same count");
     _comparator = comparator;
     _keys = keys;
     _values = values;

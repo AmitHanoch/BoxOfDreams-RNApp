@@ -25,7 +25,6 @@
 #include "Firestore/core/src/firebase/firestore/immutable/sorted_map_iterator.h"
 #include "Firestore/core/src/firebase/firestore/immutable/tree_sorted_map.h"
 #include "Firestore/core/src/firebase/firestore/util/comparison.h"
-#include "absl/base/attributes.h"
 
 namespace firebase {
 namespace firestore {
@@ -145,7 +144,7 @@ class SortedMap : public impl::SortedMapBase {
       case Tag::Tree:
         return tree_.empty();
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   /** Returns the number of items in this map. */
@@ -156,7 +155,7 @@ class SortedMap : public impl::SortedMapBase {
       case Tag::Tree:
         return tree_.size();
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   /**
@@ -167,7 +166,7 @@ class SortedMap : public impl::SortedMapBase {
    * @param value The value to associate with the key.
    * @return A new dictionary with the added/updated value.
    */
-  ABSL_MUST_USE_RESULT SortedMap insert(const K& key, const V& value) const {
+  SortedMap insert(const K& key, const V& value) const {
     switch (tag_) {
       case Tag::Array:
         if (array_.size() >= kFixedSize) {
@@ -185,7 +184,7 @@ class SortedMap : public impl::SortedMapBase {
       case Tag::Tree:
         return SortedMap{tree_.insert(key, value)};
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   /**
@@ -194,7 +193,7 @@ class SortedMap : public impl::SortedMapBase {
    * @param key The key to remove.
    * @return A new map without that value.
    */
-  ABSL_MUST_USE_RESULT SortedMap erase(const K& key) const {
+  SortedMap erase(const K& key) const {
     switch (tag_) {
       case Tag::Array:
         return SortedMap{array_.erase(key)};
@@ -206,7 +205,7 @@ class SortedMap : public impl::SortedMapBase {
         }
         return SortedMap{std::move(result)};
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   bool contains(const K& key) const {
@@ -216,7 +215,7 @@ class SortedMap : public impl::SortedMapBase {
       case Tag::Tree:
         return tree_.contains(key);
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   /**
@@ -233,7 +232,7 @@ class SortedMap : public impl::SortedMapBase {
       case Tag::Tree:
         return const_iterator{tree_.find(key)};
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   /**
@@ -249,7 +248,7 @@ class SortedMap : public impl::SortedMapBase {
       case Tag::Tree:
         return tree_.find_index(key);
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   /**
@@ -268,7 +267,7 @@ class SortedMap : public impl::SortedMapBase {
       case Tag::Tree:
         return const_iterator{tree_.lower_bound(key)};
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   const_iterator min() const {
@@ -278,7 +277,7 @@ class SortedMap : public impl::SortedMapBase {
       case Tag::Tree:
         return const_iterator{tree_.min()};
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   const_iterator max() const {
@@ -288,7 +287,7 @@ class SortedMap : public impl::SortedMapBase {
       case Tag::Tree:
         return const_iterator{tree_.max()};
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   /**
@@ -302,7 +301,7 @@ class SortedMap : public impl::SortedMapBase {
       case Tag::Tree:
         return const_iterator{tree_.begin()};
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   /**
@@ -315,7 +314,7 @@ class SortedMap : public impl::SortedMapBase {
       case Tag::Tree:
         return const_iterator{tree_.end()};
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   /**
@@ -360,7 +359,7 @@ class SortedMap : public impl::SortedMapBase {
       case Tag::Tree:
         return tree_.comparator();
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   enum class Tag {

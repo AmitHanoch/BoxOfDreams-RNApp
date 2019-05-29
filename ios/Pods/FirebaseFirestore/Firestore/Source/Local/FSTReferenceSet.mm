@@ -17,12 +17,10 @@
 #import "Firestore/Source/Local/FSTReferenceSet.h"
 
 #import "Firestore/Source/Local/FSTDocumentReference.h"
-#import "Firestore/third_party/Immutable/FSTImmutableSortedSet.h"
 
 #include "Firestore/core/src/firebase/firestore/model/document_key.h"
 
 using firebase::firestore::model::DocumentKey;
-using firebase::firestore::model::DocumentKeySet;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -70,36 +68,33 @@ NS_ASSUME_NONNULL_BEGIN
   self.referencesByID = [self.referencesByID setByAddingObject:reference];
 }
 
-- (void)addReferencesToKeys:(const DocumentKeySet &)keys forID:(int)ID {
-  for (const DocumentKey &key : keys) {
+- (void)addReferencesToKeys:(FSTDocumentKeySet *)keys forID:(int)ID {
+  [keys enumerateObjectsUsingBlock:^(FSTDocumentKey *key, BOOL *stop) {
     [self addReferenceToKey:key forID:ID];
-  }
+  }];
 }
 
 - (void)removeReferenceToKey:(const DocumentKey &)key forID:(int)ID {
   [self removeReference:[[FSTDocumentReference alloc] initWithKey:key ID:ID]];
 }
 
-- (void)removeReferencesToKeys:(const DocumentKeySet &)keys forID:(int)ID {
-  for (const DocumentKey &key : keys) {
+- (void)removeReferencesToKeys:(FSTDocumentKeySet *)keys forID:(int)ID {
+  [keys enumerateObjectsUsingBlock:^(FSTDocumentKey *key, BOOL *stop) {
     [self removeReferenceToKey:key forID:ID];
-  }
+  }];
 }
 
-- (DocumentKeySet)removeReferencesForID:(int)ID {
+- (void)removeReferencesForID:(int)ID {
   FSTDocumentReference *start =
       [[FSTDocumentReference alloc] initWithKey:DocumentKey::Empty() ID:ID];
   FSTDocumentReference *end =
       [[FSTDocumentReference alloc] initWithKey:DocumentKey::Empty() ID:(ID + 1)];
 
-  __block DocumentKeySet keys;
   [self.referencesByID enumerateObjectsFrom:start
                                          to:end
                                  usingBlock:^(FSTDocumentReference *reference, BOOL *stop) {
                                    [self removeReference:reference];
-                                   keys = keys.insert(reference.key);
                                  }];
-  return keys;
 }
 
 - (void)removeAllReferences {
@@ -111,19 +106,20 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeReference:(FSTDocumentReference *)reference {
   self.referencesByKey = [self.referencesByKey setByRemovingObject:reference];
   self.referencesByID = [self.referencesByID setByRemovingObject:reference];
+  [self.garbageCollector addPotentialGarbageKey:reference.key];
 }
 
-- (DocumentKeySet)referencedKeysForID:(int)ID {
+- (FSTDocumentKeySet *)referencedKeysForID:(int)ID {
   FSTDocumentReference *start =
       [[FSTDocumentReference alloc] initWithKey:DocumentKey::Empty() ID:ID];
   FSTDocumentReference *end =
       [[FSTDocumentReference alloc] initWithKey:DocumentKey::Empty() ID:(ID + 1)];
 
-  __block DocumentKeySet keys;
+  __block FSTDocumentKeySet *keys = [FSTDocumentKeySet keySet];
   [self.referencesByID enumerateObjectsFrom:start
                                          to:end
                                  usingBlock:^(FSTDocumentReference *reference, BOOL *stop) {
-                                   keys = keys.insert(reference.key);
+                                   keys = [keys setByAddingObject:reference.key];
                                  }];
   return keys;
 }

@@ -119,13 +119,11 @@ class SortedMapIterator {
   pointer get() const {
     switch (tag_) {
       case Tag::Array:
-        // std::array::iterator is not guaranteed to be a bare pointer but will
-        // be a RandomAccessIterator which does have operator*().
-        return &*array_iter_;
+        return array_iter_;
       case Tag::Tree:
         return tree_iter_.get();
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   reference operator*() const {
@@ -166,7 +164,7 @@ class SortedMapIterator {
       case Tag::Tree:
         return a.tree_iter_ == b.tree_iter_;
     }
-    UNREACHABLE();
+    FIREBASE_UNREACHABLE();
   }
 
   bool operator!=(const SortedMapIterator& b) const {

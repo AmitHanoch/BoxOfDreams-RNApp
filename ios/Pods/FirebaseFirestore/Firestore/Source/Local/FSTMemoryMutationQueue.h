@@ -16,25 +16,18 @@
 
 #import <Foundation/Foundation.h>
 
-#import "Firestore/Source/Local/FSTMemoryPersistence.h"
 #import "Firestore/Source/Local/FSTMutationQueue.h"
+
+@protocol FSTGarbageCollector;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class FSTLocalSerializer;
-
 @interface FSTMemoryMutationQueue : NSObject <FSTMutationQueue>
 
-- (instancetype)initWithPersistence:(FSTMemoryPersistence *)persistence NS_DESIGNATED_INITIALIZER;
++ (instancetype)mutationQueue;
 
-- (instancetype)init NS_UNAVAILABLE;
-
-/**
- * Checks to see if there are any references to a document with the given key.
- */
-- (BOOL)containsKey:(const firebase::firestore::model::DocumentKey &)key;
-
-- (size_t)byteSizeWithSerializer:(FSTLocalSerializer *)serializer;
+/** The garbage collector to notify about potential garbage keys. */
+@property(nonatomic, weak, readwrite, nullable) id<FSTGarbageCollector> garbageCollector;
 
 @end
 
