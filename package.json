@@ -12,7 +12,7 @@
   "dependencies": {
     "frisbee": "^2.0.5",
     "react": "16.6.0-alpha.8af6728",
-    "react-native": "^0.59.8",
+    "react-native": "^0.62.3",
     "react-native-firebase": "4.2.0",
     "react-native-gesture-handler": "^1.0.9",
     "react-native-google-signin": "git+https://github.com/invertase/react-native-google-signin.git#v0.12.1",
